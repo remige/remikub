@@ -1,34 +1,51 @@
 import { observable, computed, action } from "mobx";
 import { ICard } from "../model/icard";
 import { IPosition } from "../model/iposition";
-import { filter } from "lodash-es";
+import { orderBy, extend, filter } from "lodash-es";
+
 export class BoardStore {
 
-    @observable private _board: ICard[][] = [];
-    @computed public get board() { return this._board; }
-    @action public refreshBoard(board: ICard[][]) { this._board = board; }
+    @observable private _board: ICard[] = [];
+    @action public refreshBoard(board: ICard[]) { this._board = board; }
+    @computed public get board() {
+        const board: ICard[][] = [];
+
+        let currentCombinationId = -1;
+        let currentCombination: ICard[] = [];
+        orderBy(this._board, ["combinationId", "position"]).forEach(x => {
+            if (currentCombinationId !== x.combinationId) {
+                if (currentCombinationId !== -1) {
+                    board.push(currentCombination);
+                    currentCombination = [];
+                }
+                currentCombinationId = x.combinationId;
+            }
+            currentCombination.push(x);
+        });
+        if (currentCombination.length > 0) {
+            board.push(currentCombination);
+        }
+
+        return board;
+    }
 
     @action public moveCard(card: ICard, destination: IPosition, source?: IPosition) {
         if (source) {
-            this._board[source.combinaisonId][source.cardId].toRemove = true;
-        }
-
-        if (this._board.length <= destination.combinaisonId) {
-            this._board.splice(destination.combinaisonId, 0, []);
-        }
-        this._board[destination.combinaisonId].splice(destination.cardId, 0, card);
-
-        const cardsToRemove: IPosition[] = [];
-        this._board.forEach((combinaison, combinaisonId) => {
-            combinaison.forEach((currentCard, cardId) => {
-                if (currentCard.toRemove) {
-                    cardsToRemove.push({ combinaisonId, cardId });
+            const combination = filter(this._board, x => x.combinationId === source.combinaisonId);
+            combination.forEach(x => {
+                if (x.position === source.cardId) {
+                    x.combinationId = destination.combinaisonId;
+                    x.position = destination.cardId;
+                } else if (x.position > source.cardId) {
+                    x.position--;
                 }
             });
-        });
-
-        cardsToRemove.forEach(toRemove => this._board[toRemove.combinaisonId].splice(toRemove.cardId, 1));
-
-        this._board = filter(this._board, x => x.length > 0);
+            if (combination.length === 1) {
+                filter(this._board, x => x.combinationId > source.combinaisonId)
+                    .forEach(x => x.combinationId--);
+            }
+        } else {
+            this._board.push(extend({}, card, { combinaisonId: destination.combinaisonId, position: destination.cardId }));
+        }
     }
 }

@@ -17,7 +17,7 @@ export class Board extends React.Component {
 
     public render() {
         return <table>
-            {this.store.board.map((combinaison, idx) => this.renderCombinaison(combinaison, idx))}
+            {this.store.board. map((combinaison, idx) => this.renderCombinaison(combinaison, idx))}
             {this.renderCombinaison([], this.store.board.length)}
         </table>;
     }

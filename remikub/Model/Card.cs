@@ -4,15 +4,17 @@ namespace remikub.Model
 {
     public class Card
     {
-        public Card(int number, CardColor color)
+        public Card(int number, CardColor color, int combinationId, int position)
         {
-            Id = Guid.NewGuid();
             Number = number;
             Color = color;
+            CombinationId = combinationId;
+            Position = position;
         }
-        public Guid Id { get; }
         public int Number { get; }
         public CardColor Color { get; }
+        public int CombinationId { get; }
+        public int Position { get; }
     }
 
     public enum CardColor

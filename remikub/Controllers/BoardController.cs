@@ -1,5 +1,6 @@
 ﻿namespace remikub.Controllers
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using remikub.Model;
@@ -8,12 +9,9 @@
     public class BoardController : Controller
     {
         [HttpGet]
-        public async Task<Card[][]> Get()
-        {
-            var combinaison1 = new Card[] { new Card(1, CardColor.Red), new Card(2, CardColor.Red), new Card(3, CardColor.Red) };
-            var combinaison2 = new Card[] { new Card(6, CardColor.Red), new Card(6, CardColor.Blue), new Card(6, CardColor.Orange) };
-
-            return new Card[][] { combinaison1, combinaison2 };
-        }
+        public async Task<List<Card>> Get() => new List<Card> {
+            new Card(1, CardColor.Red, 0, 0), new Card(2, CardColor.Red,0, 1), new Card(3, CardColor.Red, 0, 2),
+            new Card(6, CardColor.Red, 1, 0), new Card(6, CardColor.Blue, 1, 1), new Card(6, CardColor.Orange, 1, 2)
+        };
     }
 }
