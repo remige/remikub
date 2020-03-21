@@ -1,4 +1,4 @@
 export interface IPosition {
-    combinaisonId: number;
-    cardId: number;
+    combinationId: number;
+    rank: number;
 }

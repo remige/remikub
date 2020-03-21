@@ -22,13 +22,15 @@ export class Board extends React.Component {
         </table>;
     }
 
-    private renderCombinaison(combinaison: ICard[], combinaisonId: number) {
-        return <tr key={combinaisonId}>
-            {combinaison.map((card, cardId) => <td key={cardId}><Card card={card} position={{combinaisonId, cardId}} /></td>)}
+    private renderCombinaison(combination: ICard[], combinationId: number) {
+        return <tr key={combinationId}>
+            {combination.map((card, rank) => <td key={rank}><Card card={card} position={{combinationId, rank}} /></td>)}
+            <td key={combination.length}>
             <Card onCardPut={(card, source) => this.store.moveCard(card, {
-                combinaisonId,
-                cardId: combinaison.length
+                combinationId,
+                rank: combination.length
             }, source)} />
+            </td>
         </tr>;
     }
 }

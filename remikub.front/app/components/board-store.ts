@@ -12,7 +12,7 @@ export class BoardStore {
 
         let currentCombinationId = -1;
         let currentCombination: ICard[] = [];
-        orderBy(this._board, ["combinationId", "position"]).forEach(x => {
+        orderBy(this._board, ["combinationId", "rank"]).forEach(x => {
             if (currentCombinationId !== x.combinationId) {
                 if (currentCombinationId !== -1) {
                     board.push(currentCombination);
@@ -31,21 +31,21 @@ export class BoardStore {
 
     @action public moveCard(card: ICard, destination: IPosition, source?: IPosition) {
         if (source) {
-            const combination = filter(this._board, x => x.combinationId === source.combinaisonId);
+            const combination = filter(this._board, x => x.combinationId === source.combinationId);
             combination.forEach(x => {
-                if (x.position === source.cardId) {
-                    x.combinationId = destination.combinaisonId;
-                    x.position = destination.cardId;
-                } else if (x.position > source.cardId) {
-                    x.position--;
+                if (x.rank === source.rank) {
+                    x.combinationId = destination.combinationId;
+                    x.rank = destination.rank;
+                } else if (x.rank > source.rank) {
+                    x.rank--;
                 }
             });
             if (combination.length === 1) {
-                filter(this._board, x => x.combinationId > source.combinaisonId)
+                filter(this._board, x => x.combinationId > source.combinationId)
                     .forEach(x => x.combinationId--);
             }
         } else {
-            this._board.push(extend({}, card, { combinaisonId: destination.combinaisonId, position: destination.cardId }));
+            this._board.push(extend({}, card, { combinationId: destination.combinationId, rank: destination.rank }));
         }
     }
 }
