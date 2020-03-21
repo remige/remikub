@@ -1,0 +1,46 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "typedef": [
+            false
+        ],
+        "object-literal-sort-keys": [
+            false
+        ],
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
+        ],
+        "member-ordering": [
+            false
+        ],
+        "ordered-imports": [
+            false
+        ],
+        "quotemark": [
+            true,
+            "double"
+        ],
+        "variable-name": [
+            true,
+            "allow-leading-underscore",
+            "ban-keywords",
+            "check-format",
+            "allow-pascal-case"
+        ],
+        "max-line-length": [
+            true,
+            180
+        ],
+        "import-blacklist": {
+            "severity": "error",
+            "options": [
+                "lodash"
+            ]
+        },
+        "semicolon": [true, "always"]
+    },
+    "jsRules": {
+        "object-literal-sort-keys": false
+    }
+}
