@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { BoardStore } from "./board-store";
 import { BoardService } from "../services/board-service";
 import { Combination } from "./combination";
+import { Hand } from "./hand";
 
 @observer
 export class Board extends React.Component {
@@ -18,6 +19,8 @@ export class Board extends React.Component {
         return <div>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} />)}
             <Combination combination={[]} combinationId={this.store.board.length} store={this.store} />
+
+            <Hand store={this.store} />
         </div>;
     }
 }

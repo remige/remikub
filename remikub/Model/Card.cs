@@ -6,11 +6,11 @@ namespace remikub.Model
     {
         public Card(int number, CardColor color, Coordinates coordinates)
         {
-            Number = number;
+            Value = number;
             Color = color;
             Coordinates = coordinates;
         }
-        public int Number { get; }
+        public int Value { get; }
         public CardColor Color { get; }
         public Coordinates Coordinates { get;  }
 

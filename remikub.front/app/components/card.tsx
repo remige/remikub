@@ -16,7 +16,7 @@ export class Card extends React.Component<ICardProps> {
         if (this.props.card) {
             return <div className={`card filled ${this.props.card.color}`}
                 draggable={true}
-                onDragStart={event => this.onDragStart(event)}>{this.props.card.number}</div>;
+                onDragStart={event => this.onDragStart(event)}>{this.props.card.value}</div>;
         }
         return <div className={`card empty ${this.isOvered ? "" : "hidden"}`}
             onDragEnter={_ => this.setIsOvered(true)}
