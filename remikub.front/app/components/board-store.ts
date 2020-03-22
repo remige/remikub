@@ -1,7 +1,7 @@
 import { observable, computed, action } from "mobx";
 import { ICard } from "../model/icard";
 import { ICoordinates } from "../model/icoordinates";
-import { orderBy, extend, filter } from "lodash-es";
+import { orderBy, extend, filter, find } from "lodash-es";
 
 export class BoardStore {
 
@@ -30,22 +30,56 @@ export class BoardStore {
     }
 
     @action public moveCard(card: ICard, destination: ICoordinates) {
-        if (card.coordinates) {
-            const combination = filter(this._board, x => x.coordinates.combinationId === card.coordinates.combinationId);
-            combination.forEach(x => {
+        if (!card.coordinates) {
+            // Add card
+            this._board.push(extend({}, card, { combinationId: destination.combinationId, rank: destination.rank }));
+        } else if (card.coordinates.combinationId !== destination.combinationId) {
+            // Move on different line
+            const combinationSource = this.getCombination(card.coordinates.combinationId);
+            const combinationDestination = this.getCombination(destination.combinationId);
+            combinationDestination.forEach(x => {
+                if (x.coordinates.rank >= destination.rank) {
+                    x.coordinates.rank++;
+                }
+            });
+            combinationSource.forEach(x => {
                 if (x.coordinates.rank === card.coordinates.rank) {
+                    // The card is moved
                     x.coordinates.combinationId = destination.combinationId;
                     x.coordinates.rank = destination.rank;
                 } else if (x.coordinates.rank > card.coordinates.rank) {
+                    // All the combination cards after are moved to the left
                     x.coordinates.rank--;
                 }
             });
-            if (combination.length === 1) {
+            if (combinationSource.length === 1) {
+                // If the moved card is the last one, the combination will be empty, it will be removed
+                // => all the next combination need to be moved to the top
                 filter(this._board, x => x.coordinates.combinationId > card.coordinates.combinationId)
                     .forEach(x => x.coordinates.combinationId--);
             }
-        } else {
-            this._board.push(extend({}, card, { combinationId: destination.combinationId, rank: destination.rank }));
+        } else if (card.coordinates.rank < destination.rank) {
+            // Move on the same line from the left to the right
+            const combination = this.getCombination(destination.combinationId);
+            const toMove = find(combination, x => x.coordinates.rank === card.coordinates.rank);
+            const toShift = filter(combination, x => x.coordinates.rank > card.coordinates.rank && x.coordinates.rank < destination.rank);
+            toMove!.coordinates.rank = destination.rank - 1;
+            toShift.forEach(x => {
+                x.coordinates.rank--;
+            });
+        } else if (card.coordinates.rank > destination.rank) {
+            // Move on the same line from the right to the left
+            const combination = this.getCombination(destination.combinationId);
+            const toMove = find(combination, x => x.coordinates.rank === card.coordinates.rank);
+            const toShift = filter(combination, x => x.coordinates.rank >= destination.rank && x.coordinates.rank < card.coordinates.rank);
+            toMove!.coordinates.rank = destination.rank;
+            toShift.forEach(x => {
+                x.coordinates.rank++;
+            });
         }
+    }
+
+    private getCombination(combinationId: number) {
+        return filter(this._board, x => x.coordinates.combinationId === combinationId);
     }
 }

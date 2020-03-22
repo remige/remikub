@@ -17,6 +17,11 @@
 
   &.empty {
     border-style: dotted;
+
+    &.hidden {
+      width: 5px;
+      border-style: none;
+    }
   }
 
   &.Red {

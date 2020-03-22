@@ -14,14 +14,18 @@ interface ICombinationProps {
 export class Combination extends React.Component<ICombinationProps> {
 
     public render() {
-        return <tr>
-            {this.props.combination.map(card=> <td key={card.coordinates.rank}><Card card={card} /></td>)}
-            <td key={this.props.combination.length}>
-            <Card moveCard={card => this.props.store.moveCard(card, {
+        return <div style={{ display: "flex" }}>
+            {this.props.combination.map(card => <div key={card.coordinates.rank} style={{ display: "flex" }}>
+            <Card moveCard={c => this.props.store.moveCard(c, {
                 combinationId: this.props.combinationId,
-                rank: this.props.combination.length
+                rank: card.coordinates.rank
             })} />
-            </td>
-        </tr>;
+            <Card card={card} />
+            <Card moveCard={c => this.props.store.moveCard(c, {
+                combinationId: this.props.combinationId,
+                rank: card.coordinates.rank + 1
+            })} />
+        </div>)}
+        </div>;
     }
 }

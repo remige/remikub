@@ -15,11 +15,9 @@ export class Board extends React.Component {
     }
 
     public render() {
-        return <table>
-            <tbody>
-                {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} />)}
-                <Combination combination={[]} combinationId={this.store.board.length} store={this.store} />
-            </tbody>
-        </table>;
+        return <div>
+            {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} />)}
+            <Combination combination={[]} combinationId={this.store.board.length} store={this.store} />
+        </div>;
     }
 }
