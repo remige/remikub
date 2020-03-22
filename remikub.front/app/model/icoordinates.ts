@@ -1,4 +1,4 @@
-export interface IPosition {
+export interface ICoordinates {
     combinationId: number;
     rank: number;
 }

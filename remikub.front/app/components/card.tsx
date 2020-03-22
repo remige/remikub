@@ -1,14 +1,14 @@
 import React from "react";
 import { ICard } from "../model/icard";
 import "./style.scss";
-import { IPosition } from "../model/iposition";
+import { observer } from "mobx-react";
 
 interface ICardProps {
     card?: ICard;
-    position?: IPosition;
-    onCardPut?: (card: ICard, source?: IPosition) => void;
+    moveCard?: (card: ICard) => void;
 }
 
+@observer
 export class Card extends React.Component<ICardProps> {
 
     public render() {
@@ -22,10 +22,7 @@ export class Card extends React.Component<ICardProps> {
     }
 
     private onDragStart(event: React.DragEvent<HTMLDivElement>) {
-        event.dataTransfer.setData("text/json", JSON.stringify({
-            card: this.props.card,
-            source: this.props.position
-        }));
+        event.dataTransfer.setData("text/json", JSON.stringify(this.props.card));
     }
 
     private onDragOver(event: React.DragEvent<HTMLDivElement>) {
@@ -34,7 +31,7 @@ export class Card extends React.Component<ICardProps> {
 
     private onDrop(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault();
-        const dataTransfered = JSON.parse(event.dataTransfer.getData("text/json"));
-        this.props.onCardPut!(dataTransfered.card as ICard, dataTransfered.source as IPosition);
+        const sourceCard = JSON.parse(event.dataTransfer.getData("text/json"))  as ICard;
+        this.props.moveCard!(sourceCard);
     }
 }
