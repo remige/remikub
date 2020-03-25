@@ -3,10 +3,12 @@ import { ICard } from "../model/icard";
 import "./style.scss";
 import { observer } from "mobx-react";
 import { observable, action } from "mobx";
+import { ICoordinates } from "../model/icoordinates";
 
 interface ICardProps {
     card?: ICard;
-    moveCard?: (card: ICard) => void;
+    coordinates?: ICoordinates;
+    moveCard?: (coordinates?: ICoordinates) => void;
 }
 
 @observer
@@ -26,7 +28,9 @@ export class Card extends React.Component<ICardProps> {
     }
 
     private onDragStart(event: React.DragEvent<HTMLDivElement>) {
-        event.dataTransfer.setData("text/json", JSON.stringify(this.props.card));
+        if (this.props.coordinates) {
+            event.dataTransfer.setData("text/json", JSON.stringify(this.props.coordinates));
+        }
     }
 
     @observable private isOvered = false;
@@ -40,7 +44,8 @@ export class Card extends React.Component<ICardProps> {
         this.setIsOvered(false);
 
         event.preventDefault();
-        const sourceCard = JSON.parse(event.dataTransfer.getData("text/json")) as ICard;
-        this.props.moveCard!(sourceCard);
+        const fromCoordinate = (event.dataTransfer.items.length > 0 ?
+            JSON.parse(event.dataTransfer.getData("text/json")) as ICoordinates : undefined);
+        this.props.moveCard!(fromCoordinate);
     }
 }

@@ -3,11 +3,12 @@ import { ICard } from "../model/icard";
 import { Card } from "./card";
 import { BoardStore } from "./board-store";
 import { observer } from "mobx-react";
+import { LinkedList } from "../common/linked-list/linked-list";
 
 interface ICombinationProps {
     store: BoardStore;
     combinationId: number;
-    combination: ICard[];
+    combination: LinkedList<ICard>;
 }
 
 @observer
@@ -15,16 +16,16 @@ export class Combination extends React.Component<ICombinationProps> {
 
     public render() {
         return <div style={{ display: "flex" }}>
-            {this.props.combination.map(card => <div key={card.coordinates!.rank} style={{ display: "flex" }}>
-                {card.coordinates!.rank === 0 &&
-                    <Card moveCard={c => this.props.store.moveCard(c, {
+            {this.props.combination.map((card, rank) => <div key={rank} style={{ display: "flex" }}>
+                {rank === 0 &&
+                    <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
                         combinationId: this.props.combinationId,
-                        rank: card.coordinates!.rank
+                        rank
                     })} />}
-                <Card card={card} />
-                <Card moveCard={c => this.props.store.moveCard(c, {
+                <Card card={card} coordinates={{ combinationId: this.props.combinationId, rank }} />
+                <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
                     combinationId: this.props.combinationId,
-                    rank: card.coordinates!.rank + 1
+                    rank: rank + 1
                 })} />
             </div>)}
         </div>;

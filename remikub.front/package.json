@@ -24,8 +24,7 @@
       "jsx",
       "json",
       "node"
-    ],
-    "testResultsProcessor": "jest-teamcity-reporter"
+    ]
   },
   "author": "rge",
   "license": "MIT",
