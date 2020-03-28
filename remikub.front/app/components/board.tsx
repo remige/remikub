@@ -14,13 +14,13 @@ export class Board extends React.Component {
     private store = new BoardStore();
 
     public async componentDidMount() {
-        this.store.refreshBoard(await this.service.board());
+        this.store.refreshBoard(await this.service.board(), await this.service.hand());
     }
 
     public render() {
         return <div>
-            {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} />)}
-            <Combination combination={new LinkedList<ICard>()} combinationId={this.store.board.length} store={this.store} />
+            {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}
+            <Combination combination={new LinkedList<ICard>([])} combinationId={this.store.board.length} store={this.store} place="board"/>
 
             <Hand store={this.store} />
         </div>;

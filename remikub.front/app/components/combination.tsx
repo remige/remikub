@@ -4,11 +4,13 @@ import { Card } from "./card";
 import { BoardStore } from "./board-store";
 import { observer } from "mobx-react";
 import { LinkedList } from "../common/linked-list/linked-list";
+import { PlaceType } from "../constants/constants";
 
 interface ICombinationProps {
     store: BoardStore;
     combinationId: number;
     combination: LinkedList<ICard>;
+    place: PlaceType;
 }
 
 @observer
@@ -20,12 +22,14 @@ export class Combination extends React.Component<ICombinationProps> {
                 {rank === 0 &&
                     <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
                         combinationId: this.props.combinationId,
-                        rank
+                        rank,
+                        place: this.props.place,
                     })} />}
-                <Card card={card} coordinates={{ combinationId: this.props.combinationId, rank }} />
+                <Card card={card} coordinates={{ combinationId: this.props.combinationId, rank, place: this.props.place }} />
                 <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
                     combinationId: this.props.combinationId,
-                    rank: rank + 1
+                    rank: rank + 1,
+                    place: this.props.place,
                 })} />
             </div>)}
         </div>;

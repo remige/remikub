@@ -8,7 +8,7 @@ import { ICoordinates } from "../model/icoordinates";
 interface ICardProps {
     card?: ICard;
     coordinates?: ICoordinates;
-    moveCard?: (coordinates?: ICoordinates) => void;
+    moveCard?: (coordinates: ICoordinates) => void;
 }
 
 @observer
@@ -28,9 +28,7 @@ export class Card extends React.Component<ICardProps> {
     }
 
     private onDragStart(event: React.DragEvent<HTMLDivElement>) {
-        if (this.props.coordinates) {
-            event.dataTransfer.setData("text/json", JSON.stringify(this.props.coordinates));
-        }
+        event.dataTransfer.setData("text/json", JSON.stringify(this.props.coordinates));
     }
 
     @observable private isOvered = false;
@@ -44,8 +42,7 @@ export class Card extends React.Component<ICardProps> {
         this.setIsOvered(false);
 
         event.preventDefault();
-        const fromCoordinate = (event.dataTransfer.items.length > 0 ?
-            JSON.parse(event.dataTransfer.getData("text/json")) as ICoordinates : undefined);
+        const fromCoordinate = JSON.parse(event.dataTransfer.getData("text/json")) as ICoordinates;
         this.props.moveCard!(fromCoordinate);
     }
 }

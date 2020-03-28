@@ -3,6 +3,10 @@ import { observable, computed } from "mobx";
 
 export class LinkedList<TData> {
 
+    public constructor(list: TData[] = []) {
+        list.forEach(row => this.addLast(row));
+    }
+
     @observable private _count = 0;
     @computed public get count() { return this._count; }
 
@@ -88,7 +92,7 @@ export class LinkedList<TData> {
         }
 
         const data = this.remove(from);
-        this.addAt(data, to);
+        this.addAt(data, from < to ? to - 1 : to);
     }
 
     public elementAt(position: number) {

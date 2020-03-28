@@ -79,52 +79,37 @@ describe("Linked list", () => {
 
         list.move(1, 3);
 
-        expect(list.elementAt(0).data).toMatchObject(data1);
-        expect(list.elementAt(1).data).toMatchObject(data3);
-        expect(list.elementAt(2).data).toMatchObject(data4);
-        expect(list.elementAt(3).data).toMatchObject(data2);
-        expect(list.elementAt(4).data).toMatchObject(data5);
+        checkOrder(list, data1, data3, data2, data4, data5);
         expect(list.first?.data).toMatchObject(data1);
         expect(list.last?.data).toMatchObject(data5);
 
         list.move(3, 1);
 
-        expect(list.elementAt(0).data).toMatchObject(data1);
-        expect(list.elementAt(1).data).toMatchObject(data2);
-        expect(list.elementAt(2).data).toMatchObject(data3);
-        expect(list.elementAt(3).data).toMatchObject(data4);
-        expect(list.elementAt(4).data).toMatchObject(data5);
+        checkOrder(list, data1, data4, data3, data2, data5);
         expect(list.first?.data).toMatchObject(data1);
         expect(list.last?.data).toMatchObject(data5);
 
         list.move(1, 2);
 
-        expect(list.elementAt(0).data).toMatchObject(data1);
-        expect(list.elementAt(1).data).toMatchObject(data3);
-        expect(list.elementAt(2).data).toMatchObject(data2);
-        expect(list.elementAt(3).data).toMatchObject(data4);
-        expect(list.elementAt(4).data).toMatchObject(data5);
-        expect(list.first?.data).toMatchObject(data1);
+        checkOrder(list, data1, data4, data3, data2, data5);
         expect(list.last?.data).toMatchObject(data5);
 
         list.move(0, 4);
 
-        expect(list.elementAt(0).data).toMatchObject(data3);
-        expect(list.elementAt(1).data).toMatchObject(data2);
-        expect(list.elementAt(2).data).toMatchObject(data4);
-        expect(list.elementAt(3).data).toMatchObject(data5);
-        expect(list.elementAt(4).data).toMatchObject(data1);
-        expect(list.first?.data).toMatchObject(data3);
-        expect(list.last?.data).toMatchObject(data1);
+        checkOrder(list, data4, data3, data2, data1, data5);
+        expect(list.first?.data).toMatchObject(data4);
+        expect(list.last?.data).toMatchObject(data5);
 
         list.move(4, 0);
 
-        expect(list.elementAt(0).data).toMatchObject(data1);
-        expect(list.elementAt(1).data).toMatchObject(data3);
-        expect(list.elementAt(2).data).toMatchObject(data2);
-        expect(list.elementAt(3).data).toMatchObject(data4);
-        expect(list.elementAt(4).data).toMatchObject(data5);
-        expect(list.first?.data).toMatchObject(data1);
+        checkOrder(list, data5, data4, data3, data2, data1);
+        expect(list.first?.data).toMatchObject(data5);
+        expect(list.last?.data).toMatchObject(data1);
+
+        list.move(0, 5);
+
+        checkOrder(list, data4, data3, data2, data1, data5);
+        expect(list.first?.data).toMatchObject(data4);
         expect(list.last?.data).toMatchObject(data5);
     });
 });
@@ -133,6 +118,13 @@ function check(list: LinkedList<IDataTest>, count: number, first: IDataTest, las
     expect(list.count).toBe(count);
     expect(list.first?.data).toMatchObject(first);
     expect(list.last?.data).toMatchObject(last);
+}
+
+function checkOrder(list: LinkedList<IDataTest>, ...rows: IDataTest[]) {
+    expect(list.count).toBe(rows.length);
+    for (let i = 0; i < list.count; i++) {
+        expect(list.elementAt(i).data).toMatchObject(rows[i]);
+    }
 }
 
 interface IDataTest {
