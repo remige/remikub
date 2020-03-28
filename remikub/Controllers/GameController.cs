@@ -56,7 +56,6 @@
             game.RegisterUser(userName);
             _gameRepository.SaveGame(game);
             return Ok();
-
         }
 
         [HttpGet]

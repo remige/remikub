@@ -1,7 +1,7 @@
 {
     "appTitle": "Rémikub",
     "login": {
-        "login": "Nom d'utiisateur"
+        "login": "Nom"
     },
     "gameRegistration": {
         "meetGame": "Rejoindre la partie",
