@@ -4,9 +4,9 @@ import "whatwg-fetch";
 
 import { LocaleType } from "./constants/constants";
 import { configure } from "mobx";
-import ReactDOM from 'react-dom';
-import React from 'react';
-import { Board } from './components/board';
+import ReactDOM from "react-dom";
+import React from "react";
+import { AppRouter } from "./components/app-router";
 
 export const AppContainerId = "app-content";
 
@@ -27,7 +27,7 @@ class AppInitializer {
   private async renderApp(_newLocale?: LocaleType) {
 
     ReactDOM.render(
-      React.createElement(Board),
+      React.createElement(AppRouter),
       document.getElementById(AppContainerId));
   }
 }

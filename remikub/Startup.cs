@@ -7,6 +7,7 @@ namespace remikub
     using Microsoft.Extensions.Hosting;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using remikub.Repository;
 
     public class Startup
     {
@@ -26,6 +27,9 @@ namespace remikub
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
+
+
+            services.AddSingleton<IGameRepository, GameRepositoryInMemory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

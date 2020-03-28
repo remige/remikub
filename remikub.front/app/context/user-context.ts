@@ -5,7 +5,7 @@ import * as moment from "moment";
 export class UserContext {
 
     @observable private _locale: LocaleType = "fr-FR";
-    @observable private _userName: string = "anonymous";
+    @observable private _userName: string;
 
     @computed public get locale() { return this._locale; }
     @computed public get userName() { return this._userName; }

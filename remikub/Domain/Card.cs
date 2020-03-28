@@ -1,4 +1,4 @@
-﻿namespace remikub.Model
+﻿namespace remikub.Domain
 {
     public class Card
     {

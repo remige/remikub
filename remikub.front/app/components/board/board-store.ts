@@ -1,7 +1,7 @@
 import { observable, computed, action } from "mobx";
-import { ICard } from "../model/icard";
-import { ICoordinates } from "../model/icoordinates";
-import { LinkedList } from "../common/linked-list/linked-list";
+import { ICard } from "../../model/icard";
+import { ICoordinates } from "../../model/icoordinates";
+import { LinkedList } from "../../common/linked-list/linked-list";
 
 export class BoardStore {
     @observable private _hand: LinkedList<ICard> = new LinkedList<ICard>();
@@ -24,11 +24,19 @@ export class BoardStore {
             this._hand.move(from.rank, to.rank);
         } else if (from.place === "hand" && to.place === "board") {
             const card = this._hand.remove(from.rank);
-            this._board[to.combinationId].addAt(card, to.rank);
+            this.addAt(card, to);
         } else if (from.combinationId === to.combinationId) {
             this._board[from.combinationId].move(from.rank, to.rank);
         } else {
             const card = this._board[from.combinationId].remove(from.rank);
+            this.addAt(card, to);
+        }
+    }
+
+    private addAt(card: ICard, to: ICoordinates) {
+        if (this._board.length === to.combinationId) {
+            this._board.push(new LinkedList<ICard>([card]));
+        } else {
             this._board[to.combinationId].addAt(card, to.rank);
         }
     }

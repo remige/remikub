@@ -1,3 +1,10 @@
 {
-    "appTitle": "Rémikub"
+    "appTitle": "Rémikub",
+    "login": {
+        "login": "Nom d'utiisateur"
+    },
+    "gameRegistration": {
+        "meetGame": "Rejoindre la partie",
+        "newGame": "Créer une nouvelle partie"
+    }
 }
