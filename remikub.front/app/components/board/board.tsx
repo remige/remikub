@@ -29,6 +29,7 @@ export class Board extends React.Component<IBoardProps> {
     public render() {
         return <div>
             <div>{i18next.t("board.currentUser", { user: this.store.currentUser })}</div>
+            <div>{this.store.otherUsers.map(x => <span>{x}</span>)}</div>
             <button onClick={async () => await this.refresh()}>{i18next.t("board.reset")}</button>
             <button onClick={async () => await this.play()}>{i18next.t("board.submit")}</button>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}
@@ -52,6 +53,7 @@ export class Board extends React.Component<IBoardProps> {
         await this.store.refreshBoard(
             await this.service.board(this.props.match.params.gameId),
             await this.service.currentUser(this.props.match.params.gameId),
+            await this.service.users(this.props.match.params.gameId),
         );
         await this.store.refreshHand(await this.service.hand(this.props.match.params.gameId));
     }

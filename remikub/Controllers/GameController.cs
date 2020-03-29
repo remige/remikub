@@ -44,6 +44,18 @@
             public string Name { get; }
         }
 
+        [HttpGet]
+        [Route("{id}/users")]
+        public ActionResult<ICollection<string>> AddUser(Guid id)
+        {
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+            return Ok(game.UserHands.Keys);
+        }
+
         [HttpPut]
         [Route("{id}/users/{userName}")]
         public ActionResult AddUser(Guid id, string userName)

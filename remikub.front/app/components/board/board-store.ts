@@ -2,10 +2,14 @@ import { observable, computed, action } from "mobx";
 import { ICard } from "../../model/icard";
 import { ICoordinates } from "../../model/icoordinates";
 import { LinkedList } from "../../common/linked-list/linked-list";
+import { filter } from "lodash-es";
 
 export class BoardStore {
     @observable private _currentUser: string;
     @computed public get currentUser() { return this._currentUser; }
+
+    @observable private _otherUsers: string[] = [];
+    @computed public get otherUsers() { return this._otherUsers; }
 
     @observable private _hand: LinkedList<ICard> = new LinkedList<ICard>();
     @computed public get hand() { return this._hand; }
@@ -13,9 +17,10 @@ export class BoardStore {
     @observable private _board: LinkedList<ICard>[] = [];
     @computed public get board() { return this._board; }
 
-    @action public refreshBoard(board: ICard[][], currentUser: string) {
+    @action public refreshBoard(board: ICard[][], currentUser: string, users: string[]) {
         this._board = board.map(x => new LinkedList<ICard>(x));
         this._currentUser = currentUser;
+        this._otherUsers = filter(users, x => x !== currentUser);
     }
 
     @action public refreshHand(hand: ICard[]) {

@@ -25,6 +25,10 @@ export class GameService {
         return await fetcher.httpGet<string>(`/games/${gameId}/current-user`);
     }
 
+    public async users(gameId: string) {
+        return await fetcher.httpGet<string[]>(`/games/${gameId}/users`);
+    }
+
     public async hand(gameId: string) {
         return await fetcher.httpGet<ICard[]>(`/games/${gameId}/hand/${userContext.userName}`);
     }
