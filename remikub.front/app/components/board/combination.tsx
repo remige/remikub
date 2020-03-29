@@ -18,20 +18,18 @@ export class Combination extends React.Component<ICombinationProps> {
 
     public render() {
         return <div style={{ display: "flex" }}>
-            {this.props.place === "board" &&
-                <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
-                    combinationId: this.props.combinationId,
-                    rank: 0,
-                    place: this.props.place,
-                })} />}
+            <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
+                combinationId: this.props.combinationId,
+                rank: 0,
+                place: this.props.place,
+            })} />
             {this.props.combination.map((card, rank) => <div key={rank} style={{ display: "flex" }}>
                 <Card card={card} coordinates={{ combinationId: this.props.combinationId, rank, place: this.props.place }} />
-                {this.props.place === "board" &&
-                    <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
-                        combinationId: this.props.combinationId,
-                        rank: rank + 1,
-                        place: this.props.place,
-                    })} />}
+                <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
+                    combinationId: this.props.combinationId,
+                    rank: rank + 1,
+                    place: this.props.place,
+                })} />
             </div>)}
         </div>;
     }

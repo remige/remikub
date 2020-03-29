@@ -30,7 +30,7 @@ export class BoardStore {
 
     @action public moveCard(from: ICoordinates, to: ICoordinates) {
         if (from.place === "board" && to.place === "hand") {
-            throw new Error("Cannot move cad frm the bord to your hand");
+            throw new Error("Cannot move cad from the bord to your hand");
         }
 
         if (from.place === "hand" && to.place === "hand") {
