@@ -7,6 +7,7 @@ import { configure } from "mobx";
 import ReactDOM from "react-dom";
 import React from "react";
 import { AppRouter } from "./components/app-router";
+import { signalrClient } from "./signalR/signalr-client";
 
 export const AppContainerId = "app-content";
 
@@ -16,6 +17,7 @@ class AppInitializer {
     configure({ enforceActions: "observed" });
 
     await i18nManager.init(async (newLocale?: LocaleType) => await this.renderApp(newLocale));
+    await signalrClient.init();
 
     if (document.readyState === "complete") {
       await this.renderApp();

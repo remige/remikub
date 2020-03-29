@@ -3,6 +3,7 @@ import { ICard } from "../../model/icard";
 import { ICoordinates } from "../../model/icoordinates";
 import { LinkedList } from "../../common/linked-list/linked-list";
 import { filter } from "lodash-es";
+import { userContext } from "../../context/user-context";
 
 export class BoardStore {
     @observable private _currentUser: string;
@@ -20,7 +21,7 @@ export class BoardStore {
     @action public refreshBoard(board: ICard[][], currentUser: string, users: string[]) {
         this._board = board.map(x => new LinkedList<ICard>(x));
         this._currentUser = currentUser;
-        this._otherUsers = filter(users, x => x !== currentUser);
+        this._otherUsers = filter(users, x => x !== userContext.userName);
     }
 
     @action public refreshHand(hand: ICard[]) {

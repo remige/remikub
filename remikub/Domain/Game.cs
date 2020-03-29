@@ -23,7 +23,7 @@
 
         public Guid Id { get; }
         public string Name { get; }
-        public string CurrentUser { get; private set; }
+        public string? CurrentUser { get; private set; }
         public List<List<Card>> Board { get; private set; } = new List<List<Card>>();
         public IDictionary<string, List<Card>> UserHands { get; } = new Dictionary<string, List<Card>>();
         private List<string> Users = new List<string>();
@@ -100,8 +100,7 @@
 
         private void EndTurn()
         {
-
-            CurrentUser = Users[(Users.IndexOf(CurrentUser) + 1) % Users.Count];
+            CurrentUser = Users[(Users.IndexOf(CurrentUser!) + 1) % Users.Count];
         }
 
         private bool IsValidCombination(List<Card> combination)

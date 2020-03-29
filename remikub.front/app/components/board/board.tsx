@@ -9,6 +9,8 @@ import { ICard } from "../../model/icard";
 import { match } from "react-router";
 import { RouterStore } from "mobx-react-router";
 import i18next from "i18next";
+import { signalrClient } from "../../signalR/signalr-client";
+import { IUserHasPlayed } from "../../model/iuser-has-played";
 
 interface IBoardProps {
     routing: RouterStore;
@@ -23,13 +25,20 @@ export class Board extends React.Component<IBoardProps> {
     private store = new BoardStore();
 
     public async componentDidMount() {
+        signalrClient.register("UserHasPlayed", (message: IUserHasPlayed) => {
+            if (message.gameId === this.props.match.params.gameId) {
+                this.refresh();
+            }
+        });
         await this.refresh();
     }
+
+    public async componentWillUnmount() { signalrClient.unregister("UserHasPlayed"); }
 
     public render() {
         return <div>
             <div>{i18next.t("board.currentUser", { user: this.store.currentUser })}</div>
-            <div>{this.store.otherUsers.map(x => <span>{x}</span>)}</div>
+            <div>{this.store.otherUsers.map(x => <span key={x}>{x}</span>)}</div>
             <button onClick={async () => await this.refresh()}>{i18next.t("board.reset")}</button>
             <button onClick={async () => await this.play()}>{i18next.t("board.submit")}</button>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}

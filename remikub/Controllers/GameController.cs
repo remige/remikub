@@ -7,15 +7,19 @@
     using Microsoft.AspNetCore.Mvc;
     using remikub.Domain;
     using remikub.Repository;
+    using remikub.Hubs;
+    using Microsoft.AspNetCore.SignalR;
 
     [Route("/api/v1/games")]
     public class GameController : Controller
     {
         private readonly IGameRepository _gameRepository;
+        private readonly INotifier _notifier;
 
-        public GameController(IGameRepository gameRepository)
+        public GameController(IGameRepository gameRepository, INotifier notifier )
         {
             _gameRepository = gameRepository;
+            _notifier = notifier;
         }
 
         [HttpPost]
@@ -115,7 +119,7 @@
 
         [HttpPut]
         [Route("{id}/hand/{user}/draw-card")]
-        public ActionResult DrawCard(Guid id, string user)
+        public async Task<ActionResult> DrawCard(Guid id, string user)
         {
             // TODO : this is absolutly not secured, should be done with authentication
             var game = _gameRepository.GetGame(id);
@@ -129,13 +133,16 @@
             }
 
             game.DrawCard(user);
+
+            // Shoudl be done by event sourcing...
+            await _notifier.NotifyUserHasPlayed(id, user);
             return Ok();
         }
 
 
         [HttpPut]
         [Route("{id}/play/{user}")]
-        public ActionResult Play(Guid id, string user, [FromBody] PlayCommand command)
+        public async Task<ActionResult> Play(Guid id, string user, [FromBody] PlayCommand command)
         {
             // TODO : this is absolutly not secured, should be done with authentication
             var game = _gameRepository.GetGame(id);
@@ -149,6 +156,9 @@
             }
 
             game.Play(user, command.Board, command.Hand);
+
+            // Shoudl be done by event sourcing...
+            await _notifier.NotifyUserHasPlayed(id, user);
             return Ok();
         }
 

@@ -8,6 +8,7 @@ namespace remikub
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using remikub.Controllers;
+    using remikub.Hubs;
     using remikub.Repository;
 
     public class Startup
@@ -31,6 +32,8 @@ namespace remikub
 
             services.AddMvc(options => options.Filters.Add<HttpExceptionFilter>());
             services.AddSingleton<IGameRepository, GameRepositoryInMemory>();
+            services.AddSignalR();
+            services.AddTransient<INotifier, Notifier>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +53,7 @@ namespace remikub
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>(nameof(NotificationHub));
             });
 
         }
