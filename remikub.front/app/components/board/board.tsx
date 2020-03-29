@@ -23,26 +23,36 @@ export class Board extends React.Component<IBoardProps> {
     private store = new BoardStore();
 
     public async componentDidMount() {
-        await this.store.refreshBoard(await this.service.board(this.props.match.params.gameId));
+        await this.refresh();
     }
 
     public render() {
         return <div>
-            <button onClick={async () => await this.reset()}>{i18next.t("board.reset")}</button>
+            <div>{i18next.t("board.currentUser", { user: this.store.currentUser })}</div>
+            <button onClick={async () => await this.refresh()}>{i18next.t("board.reset")}</button>
             <button onClick={async () => await this.play()}>{i18next.t("board.submit")}</button>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}
             <Combination combination={new LinkedList<ICard>([])} combinationId={this.store.board.length} store={this.store} place="board" />
 
-            <Hand store={this.store} service={this.service} gameId={this.props.match.params.gameId} />
+            <Hand store={this.store} service={this.service} gameId={this.props.match.params.gameId} drawCard={async () => await this.drawCard()} />
         </div>;
     }
 
     public async play() {
         await this.service.play(this.props.match.params.gameId, this.store.board.map(x => x.map(y => y)), this.store.hand.map(x => x));
+        await this.refresh();
     }
 
-    public async reset() {
-        await this.store.refreshBoard(await this.service.board(this.props.match.params.gameId));
+    private async drawCard() {
+        await this.service.drawCard(this.props.match.params.gameId);
+        await this.refresh();
+    }
+
+    public async refresh() {
+        await this.store.refreshBoard(
+            await this.service.board(this.props.match.params.gameId),
+            await this.service.currentUser(this.props.match.params.gameId),
+        );
         await this.store.refreshHand(await this.service.hand(this.props.match.params.gameId));
     }
 }

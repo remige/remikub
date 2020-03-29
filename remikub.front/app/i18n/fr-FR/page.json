@@ -11,6 +11,7 @@
         "drawCard": "Tirer une carte"
     },
     "board": {
+        "currentUser": "C'est au tour de {{user}}",
         "reset": "Annuler les mouvements en cours",
         "submit": "Terminer son tour"
     }

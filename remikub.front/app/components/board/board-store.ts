@@ -4,14 +4,18 @@ import { ICoordinates } from "../../model/icoordinates";
 import { LinkedList } from "../../common/linked-list/linked-list";
 
 export class BoardStore {
+    @observable private _currentUser: string;
+    @computed public get currentUser() { return this._currentUser; }
+
     @observable private _hand: LinkedList<ICard> = new LinkedList<ICard>();
     @computed public get hand() { return this._hand; }
 
     @observable private _board: LinkedList<ICard>[] = [];
     @computed public get board() { return this._board; }
 
-    @action public refreshBoard(board: ICard[][]) {
+    @action public refreshBoard(board: ICard[][], currentUser: string) {
         this._board = board.map(x => new LinkedList<ICard>(x));
+        this._currentUser = currentUser;
     }
 
     @action public refreshHand(hand: ICard[]) {

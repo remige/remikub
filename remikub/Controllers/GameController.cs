@@ -59,6 +59,18 @@
         }
 
         [HttpGet]
+        [Route("{id}/current-user")]
+        public ActionResult<List<List<Card>>> GetCurrentUser(Guid id)
+        {
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+            return Ok(game.CurrentUser);
+        }
+
+        [HttpGet]
         [Route("{id}/board")]
         public ActionResult<List<List<Card>>> GetBoard(Guid id)
         {

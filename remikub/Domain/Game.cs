@@ -23,20 +23,27 @@
 
         public Guid Id { get; }
         public string Name { get; }
+        public string CurrentUser { get; private set; }
         public List<List<Card>> Board { get; private set; } = new List<List<Card>>();
         public IDictionary<string, List<Card>> UserHands { get; } = new Dictionary<string, List<Card>>();
+        private List<string> Users = new List<string>();
         private List<Card> AvailableCards { get; }
 
         public void RegisterUser(string user)
         {
+            Users.Add(user);
+            if(string.IsNullOrEmpty(CurrentUser))
+            {
+                CurrentUser = user;
+            }
             UserHands[user] = new List<Card>();
             for (int i = 1; i <= 14; i++)
             {
-                DrawCard(user);
+                DrawCard(user, false);
             }
         }
 
-        public void DrawCard(string user)
+        public void DrawCard(string user, bool checkUserTurn = true)
         {
             if (!UserHands.ContainsKey(user))
             {
@@ -46,19 +53,26 @@
             {
                 throw new ArgumentException($"No card available");
             }
+            if(checkUserTurn && CurrentUser != user)
+            {
+                throw new ArgumentException($"Not {user} turn");
+            }
 
             var card = AvailableCards[new Random().Next(0, AvailableCards.Count - 1)];
             UserHands[user].Add(card);
             AvailableCards.Remove(card);
+            EndTurn();
         }
 
         public void Play(string user, List<List<Card>> board, List<Card> hand)
         {
-            // TODO : check this is the user turn
-
             if (!UserHands.TryGetValue(user, out var actualHand))
             {
                 throw new ArgumentException($"User {user} is unknown");
+            }
+            if (CurrentUser != user)
+            {
+                throw new ArgumentException($"Not {user} turn");
             }
 
             if (hand.Count == actualHand.Count)
@@ -81,6 +95,13 @@
 
             Board = board;
             UserHands[user] = hand;
+            EndTurn();
+        }
+
+        private void EndTurn()
+        {
+
+            CurrentUser = Users[(Users.IndexOf(CurrentUser) + 1) % Users.Count];
         }
 
         private bool IsValidCombination(List<Card> combination)
