@@ -6,5 +6,8 @@
     "gameRegistration": {
         "meetGame": "Rejoindre la partie",
         "newGame": "Créer une nouvelle partie"
+    },
+    "hand": {
+        "drawCard": "Tirer une carte"
     }
 }

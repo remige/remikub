@@ -10,8 +10,11 @@ export class BoardStore {
     @observable private _board: LinkedList<ICard>[] = [];
     @computed public get board() { return this._board; }
 
-    @action public refreshBoard(board: ICard[][], hand: ICard[]) {
+    @action public refreshBoard(board: ICard[][]) {
         this._board = board.map(x => new LinkedList<ICard>(x));
+    }
+
+    @action public refreshHand(hand: ICard[]) {
         this._hand = new LinkedList<ICard>(hand);
     }
 

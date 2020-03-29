@@ -23,4 +23,8 @@ export class GameService {
     public async hand(gameId: string, userName: string) {
         return await fetcher.httpGet<ICard[]>(`/games/${gameId}/hand/${userName}`);
     }
+
+    public async drawCard(gameId: string, userName: string) {
+        return await fetcher.httpPut<{}>(`/games/${gameId}/hand/${userName}/draw-card`);
+    }
 }

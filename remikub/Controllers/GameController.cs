@@ -87,5 +87,25 @@
 
             return game.UserHands[user];
         }
+
+
+        [HttpPut]
+        [Route("{id}/hand/{user}/draw-card")]
+        public ActionResult DrawCard(Guid id, string user)
+        {
+            // TODO : this is absolutly not secured, should be done with authentication
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+            if (!game.UserHands.ContainsKey(user))
+            {
+                return NotFound(user);
+            }
+
+            game.DrawCard(user);
+            return Ok();
+        }
     }
 }
