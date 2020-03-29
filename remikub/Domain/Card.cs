@@ -10,6 +10,7 @@
         public int Value { get; }
         public CardColor Color { get; }
 
+        public bool IsEquivalent(Card card) => Value == card.Value && Color == card.Color;
     }
 
     public enum CardColor

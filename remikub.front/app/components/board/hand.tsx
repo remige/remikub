@@ -4,7 +4,6 @@ import { BoardStore } from "./board-store";
 import { Combination } from "./combination";
 import { observer } from "mobx-react";
 import { GameService } from "../../services/game-service";
-import { userContext } from "../../context/user-context";
 import i18next from "i18next";
 
 interface IHandProps {
@@ -28,11 +27,11 @@ export class Hand extends React.Component<IHandProps> {
     }
 
     private async drawCard() {
-        await this.props.service.drawCard(this.props.gameId, userContext.userName);
+        await this.props.service.drawCard(this.props.gameId);
         await this.refresh();
     }
 
     private async refresh() {
-        this.props.store.refreshHand(await this.props.service.hand(this.props.gameId, userContext.userName));
+        this.props.store.refreshHand(await this.props.service.hand(this.props.gameId));
     }
 }

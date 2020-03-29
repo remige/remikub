@@ -107,5 +107,31 @@
             game.DrawCard(user);
             return Ok();
         }
+
+
+        [HttpPut]
+        [Route("{id}/play/{user}")]
+        public ActionResult Play(Guid id, string user, [FromBody] PlayCommand command)
+        {
+            // TODO : this is absolutly not secured, should be done with authentication
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+            if (!game.UserHands.ContainsKey(user))
+            {
+                return NotFound(user);
+            }
+
+            game.Play(user, command.Board, command.Hand);
+            return Ok();
+        }
+
+        public class PlayCommand
+        {
+            public List<List<Card>> Board { get; set; } = new List<List<Card>>();
+            public List<Card> Hand { get; set; } = new List<Card>();
+        }
     }
 }

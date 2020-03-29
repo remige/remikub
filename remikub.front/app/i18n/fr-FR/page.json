@@ -9,5 +9,8 @@
     },
     "hand": {
         "drawCard": "Tirer une carte"
+    },
+    "board": {
+        "submit": "Terminer son tour"
     }
 }
