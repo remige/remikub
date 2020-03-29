@@ -7,6 +7,7 @@ namespace remikub
     using Microsoft.Extensions.Hosting;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using remikub.Controllers;
     using remikub.Repository;
 
     public class Startup
@@ -28,7 +29,7 @@ namespace remikub
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
 
-
+            services.AddMvc(options => options.Filters.Add<HttpExceptionFilter>());
             services.AddSingleton<IGameRepository, GameRepositoryInMemory>();
         }
 
@@ -50,6 +51,7 @@ namespace remikub
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

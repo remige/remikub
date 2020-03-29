@@ -66,7 +66,7 @@
                 throw new RemikubException(RemikubExceptionCode.PlayOrDraw);
             }
 
-            if (IsEquivalent(hand.Union(board.SelectMany(x => x)), actualHand.Union(Board.SelectMany(x => x))))
+            if (!IsEquivalent(hand.Union(board.SelectMany(x => x)), actualHand.Union(Board.SelectMany(x => x))))
             {
                 throw new RemikubException(RemikubExceptionCode.InvalidCardAddedOrRemoved);
             }
@@ -109,9 +109,9 @@
         {
             CardColor? currentColor = null;
             int? currentValue = null;
-            foreach(var card in combination)
+            foreach (var card in combination)
             {
-                if(currentValue != null && currentValue + 1 != card.Value ||
+                if (currentValue != null && currentValue + 1 != card.Value ||
                     currentColor != null && currentColor != card.Color)
                 {
                     return false;
@@ -124,9 +124,20 @@
 
         private bool IsEquivalent(IEnumerable<Card> cardsSource, IEnumerable<Card> cardsTarget)
         {
-            if (cardsSource.Count() != cardsTarget.Count() ||
-                cardsSource.Any(source => cardsTarget.All(target => !target.IsEquivalent(source)))) {
+            if (cardsSource.Count() != cardsTarget.Count())
+            {
                 return false;
+            }
+
+            var countBySourceCard = cardsSource.GroupBy(x => new { x.Color, x.Value }).ToDictionary(x => x.Key, x => x.Count());
+            var countByTargetCard = cardsSource.GroupBy(x => new { x.Color, x.Value }).ToDictionary(x => x.Key, x => x.Count());
+
+            foreach (var (key, sourceCount) in countBySourceCard)
+            {
+                if (!countByTargetCard.TryGetValue(key, out var targetCount) || targetCount != sourceCount)
+                {
+                    return false;
+                }
             }
             return true;
         }

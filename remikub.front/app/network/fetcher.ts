@@ -2,6 +2,7 @@ import { FetcherResponse } from "./fetcher-response";
 import { isObject } from "lodash-es";
 import { userContext } from "../context/user-context";
 import i18next from "i18next";
+import { IFetcherError } from "./ifetcher-error";
 
 interface IRequestConfig {
     method: HttpMethodType;
@@ -34,8 +35,7 @@ class Fetcher {
         if (response.succeeded) {
             return response.value;
         } else {
-            // TODO : response.errors.forEach(error => notificationModel.addErrorMessageWithDetail(
-            throw new Error(`${response.errorCode} / ${response.errorMessage}`);
+            alert(response.error.code);
         }
     }
 
@@ -63,11 +63,12 @@ class Fetcher {
             } else if (request.status === 404) {
                 throw new Error(i18next.t("error.general.notFound"));
             } else if (request.status >= 500) {
-                return FetcherResponse.Failed(request.status, "error.general.unexpectedError");
+                return FetcherResponse.Failed(request.status, { code: "error.general.unexpectedError" });
             } else if (request.status >= 400) {
-                return FetcherResponse.Failed(request.status, ""); // TODO : define a contract with backend to parse the business errors
+                const error = await this.parseTextResponseAsync(request) as IFetcherError;
+                return FetcherResponse.Failed(request.status, error);
             } else {
-                return new FetcherResponse(true, await this.parseTextResponseAsync(request));
+                return new FetcherResponse(await this.parseTextResponseAsync(request));
             }
         } catch (error) {
             return FetcherResponse.Failed(500, error.message);

@@ -2,9 +2,9 @@
 {
     public class Card
     {
-        public Card(int number, CardColor color)
+        public Card(int value, CardColor color)
         {
-            Value = number;
+            Value = value;
             Color = color;
         }
         public int Value { get; }

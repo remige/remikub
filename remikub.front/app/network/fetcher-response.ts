@@ -1,27 +1,26 @@
+import { IFetcherError } from "./ifetcher-error";
+
 export class FetcherResponse<T> {
 
-    constructor(succeeded: boolean, value?: T) {
+    constructor(value?: T) {
         this._value = value || null;
-        this._succeeded = succeeded;
     }
 
-    public static Failed<T>(errorCode: number, errorMessage: string) {
-        const result = new FetcherResponse<T>(false);
-        result._errorCode = errorCode;
-        result._errorMessage = errorMessage;
-        result._succeeded = false;
+    public static Failed<T>(status: number, error: IFetcherError) {
+        const result = new FetcherResponse<T>();
+        result._status = status;
+        result._error = error;
         return result;
     }
 
     private _value: T | null;
     public get value() { return this._value; }
 
-    public _succeeded: boolean;
-    public get succeeded() { return this._succeeded; }
+    public get succeeded() { return this._error === undefined; }
 
-    private _errorCode: number;
-    public get errorCode() { return this._errorCode; }
+    private _status: number;
+    public get status() { return this._status; }
 
-    private _errorMessage: string;
-    public get errorMessage() { return this._errorMessage; }
+    private _error: IFetcherError;
+    public get error() { return this._error; }
 }
