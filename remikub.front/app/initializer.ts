@@ -1,7 +1,6 @@
 import { i18nManager } from "./i18n/i18n-manager";
 import "@babel/polyfill";
 import "whatwg-fetch";
-
 import { LocaleType } from "./constants/constants";
 import { configure } from "mobx";
 import ReactDOM from "react-dom";
