@@ -30,6 +30,10 @@ class Fetcher {
         return await this.callFetch({ method: "PUT", url, data });
     }
 
+    public async httpDelete<T>(url: string, data?: {}): Promise<T> {
+        return await this.callFetch({ method: "DELETE", url, data });
+    }
+
     private async callFetch(requestConfig: IRequestConfig) {
         const response = await this.fetch(requestConfig);
         if (response.succeeded) {

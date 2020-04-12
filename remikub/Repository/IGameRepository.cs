@@ -9,5 +9,7 @@
         Game? GetGame(Guid id);
         List<Game> GetGames();
         void SaveGame(Game game);
+
+        void DeleteGame(Guid id);
     }
 }

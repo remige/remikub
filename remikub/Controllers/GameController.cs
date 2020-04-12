@@ -31,6 +31,13 @@
             return game.Id;
         }
 
+        [HttpDelete]
+        [Route("{gameId}")]
+        public void DeleteGame(Guid gameId)
+        {
+            _gameRepository.DeleteGame(gameId);
+        }
+
         [HttpGet]
         public List<GameResult> Games()
         {

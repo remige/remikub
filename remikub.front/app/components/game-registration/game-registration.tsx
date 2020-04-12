@@ -34,6 +34,7 @@ export class GameRegistration extends React.Component<IGameRegistration> {
                 {this.store.games.map(game => <li key={game.id}>
                     <div>{game.name}</div>
                     <div><button onClick={_ => this.meetGame(game.id)}>{i18next.t("gameRegistration.meetGame")}</button></div>
+                    <div><button onClick={_ => this.deleteGame(game.id)}>{i18next.t("gameRegistration.deleteGame")}</button></div>
                 </li>)}
             </ul>
         </div>;
@@ -48,6 +49,11 @@ export class GameRegistration extends React.Component<IGameRegistration> {
     private async meetGame(id: string) {
         await this.service.addUserToGame(userContext.userName, id);
         this.props.routing.push(`${gamePlayRoute}/${id}`);
+    }
+
+    private async deleteGame(id: string) {
+        await this.service.deleteGame(id);
+        await this.refresh();
     }
 
     private async refresh() {

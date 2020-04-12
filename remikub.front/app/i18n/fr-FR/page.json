@@ -5,7 +5,8 @@
     },
     "gameRegistration": {
         "meetGame": "Rejoindre la partie",
-        "newGame": "Créer une nouvelle partie"
+        "newGame": "Créer une nouvelle partie",
+        "deleteGame": "Supprimer la partie"
     },
     "hand": {
         "drawCard": "Tirer une carte"

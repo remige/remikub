@@ -25,5 +25,13 @@
         {
             _games[game.Id] = game;
         }
+
+        public void DeleteGame(Guid id)
+        {
+            if(_games.ContainsKey(id))
+            {
+                _games.Remove(id);
+            }
+        }
     }
 }

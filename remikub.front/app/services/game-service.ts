@@ -17,6 +17,10 @@ export class GameService {
         return await fetcher.httpPut<{}>(`/games/${gameId}/users/${userName}`);
     }
 
+    public async deleteGame(gameId: string) {
+        await fetcher.httpDelete<{}>(`/games/${gameId}`);
+    }
+
     public async board(gameId: string) {
         return await fetcher.httpGet<ICard[][]>(`/games/${gameId}/board`);
     }
