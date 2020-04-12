@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnection } from "@microsoft/signalR";
+import { HubConnectionBuilder, HubConnection } from "@microsoft/signalr";
 
 class SignalrClient {
 

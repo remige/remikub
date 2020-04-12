@@ -1,5 +1,7 @@
 namespace remikub
 {
+    using System;
+    using System.Net;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -10,6 +12,7 @@ namespace remikub
     using remikub.Controllers;
     using remikub.Hubs;
     using remikub.Repository;
+    using StackExchange.Redis;
 
     public class Startup
     {
@@ -32,7 +35,34 @@ namespace remikub
 
             services.AddMvc(options => options.Filters.Add<HttpExceptionFilter>());
             services.AddSingleton<IGameRepository, GameRepositoryInMemory>();
-            services.AddSignalR();
+            services.AddSignalR(o => o.EnableDetailedErrors = true);
+/*
+                .AddStackExchangeRedis("127.0.0.1")
+                .AddStackExchangeRedis(o =>
+                {
+                    o.ConnectionFactory = async writer =>
+                    {
+                        var config = new ConfigurationOptions
+                        {
+                            AbortOnConnectFail = false
+                        };
+                        config.EndPoints.Add(IPAddress.Loopback, 0);
+                        config.SetDefaultPorts();
+                        var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                        connection.ConnectionFailed += (_, e) =>
+                        {
+                            Console.WriteLine("Connection to Redis failed.");
+                        };
+
+                        if (!connection.IsConnected)
+                        {
+                            Console.WriteLine("Did not connect to Redis.");
+                        }
+
+                        return connection;
+                    };
+                });
+*/
             services.AddTransient<INotifier, Notifier>();
         }
 
