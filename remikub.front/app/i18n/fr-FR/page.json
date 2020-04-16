@@ -1,12 +1,14 @@
 {
     "appTitle": "Rémikub",
     "login": {
-        "login": "Nom"
+        "titre": "Identifez -vous",
+        "login": "Nom",
+        "submit": "Go"
     },
     "gameRegistration": {
-        "meetGame": "Rejoindre la partie",
-        "newGame": "Créer une nouvelle partie",
-        "deleteGame": "Supprimer la partie"
+        "titre": "Rejoindre la partie",
+        "submit": "Créer la partie",
+        "newGame": "Nom de la partie"
     },
     "hand": {
         "drawCard": "Tirer une carte"

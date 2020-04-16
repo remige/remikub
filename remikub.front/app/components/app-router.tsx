@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import {
     Router,
     Switch,
@@ -12,6 +12,8 @@ import { RouterStore, syncHistoryWithStore } from "mobx-react-router";
 import { Provider, observer } from "mobx-react";
 import { GameRegistration } from "./game-registration/game-registration";
 import { Board } from "./board/board";
+import { Ref } from "semantic-ui-react";
+import { Header } from "./header/header";
 export const gameRegistrationRoute = "/game-registration";
 export const gamePlayRoute = "/game-play";
 
@@ -24,6 +26,8 @@ const stores = {
 
 @observer
 export class AppRouter extends React.Component {
+    private contextRef = createRef();
+
 
     public render() {
         return <Provider {...stores}>
@@ -34,6 +38,17 @@ export class AppRouter extends React.Component {
     }
 
     private renderApp() {
+        return <div>
+            <Ref innerRef={this.contextRef}>
+                <Header context={this.contextRef} />
+            </Ref>
+            <div>
+                {this.renderContent()}
+            </div>
+        </div>;
+    }
+
+    private renderContent() {
         if (!userContext.userName) {
             return <LoginPage routing={routingStore} />;
         }

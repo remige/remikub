@@ -6,6 +6,7 @@ import { GameRegistrationStore } from "./game-registration-store";
 import i18next from "i18next";
 import { userContext } from "../../context/user-context";
 import { gamePlayRoute } from "../app-router";
+import { Dimmer, Segment, Header, Form, Input, Button, List, Icon } from "semantic-ui-react";
 
 interface IGameRegistration {
     routing: RouterStore;
@@ -24,40 +25,49 @@ export class GameRegistration extends React.Component<IGameRegistration> {
 
     public render() {
         return <div>
-            <form onSubmit={event => this.createGame(event)} action="">
-                <label htmlFor="newGame">{i18next.t("gameRegistration.newGame")}</label>
-                <input type="text" name="newGame" id="newGame"
-                    value={this.store.newGame}
-                    onChange={event => this.store.setNewGame(event.target.value)} />
-            </form>
-            <ul>
-                {this.store.games.map(game => <li key={game.id}>
-                    <div>{game.name}</div>
-                    <div><button onClick={_ => this.meetGame(game.id)}>{i18next.t("gameRegistration.meetGame")}</button></div>
-                    <div><button onClick={_ => this.deleteGame(game.id)}>{i18next.t("gameRegistration.deleteGame")}</button></div>
-                </li>)}
-            </ul>
-        </div>;
+            <Dimmer.Dimmable as={Segment}>
+                <Header as="h3">{i18next.t("gameRegistration.titre")}</Header>
+                <Form onSubmit={async event => await this.createGame(event)} action="">
+                    <Form.Field>
+                        <Input label={i18next.t("gameRegistration.newGame")}
+                            value={this.store.newGame}
+                            onChange={event => this.store.setNewGame(event.target.value)}
+                        />
+                    </Form.Field>
+                    <Button onClick={async event => await this.createGame(event)}>{i18next.t("gameRegistration.submit")}</Button>
+                </Form>
+            </Dimmer.Dimmable>
+            <List divided>
+                {this.store.games.map(game => <List.Item key={game.id} as="a" onClick={event => this.meetGame(event, game.id)}>
+                    <List.Header>{game.name}</List.Header>
+                    <List.Content floated="right">
+                        <div onClick={event => this.deleteGame(event, game.id)}><Icon name="delete" link /></div>
+                    </List.Content>
+                </List.Item>)}
+            </List>
+        </div >;
     }
 
-    private async createGame(event: React.FormEvent<HTMLFormElement>) {
+    private async createGame(event: React.FormEvent) {
         event.preventDefault();
         await this.service.createGame(this.store.newGame);
         await this.refresh();
     }
 
-    private async meetGame(id: string) {
+    private async meetGame(event: React.FormEvent, id: string) {
+        event.stopPropagation();
         await this.service.addUserToGame(userContext.userName, id);
         this.props.routing.push(`${gamePlayRoute}/${id}`);
     }
 
-    private async deleteGame(id: string) {
+    private async deleteGame(event: React.FormEvent, id: string) {
+        event.stopPropagation();
         await this.service.deleteGame(id);
         await this.refresh();
     }
 
     private async refresh() {
-        this.store.setGames(await this.service.games());
         this.store.setNewGame();
+        this.store.setGames(await this.service.games());
     }
 }

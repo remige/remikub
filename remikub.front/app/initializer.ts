@@ -7,6 +7,7 @@ import ReactDOM from "react-dom";
 import React from "react";
 import { AppRouter } from "./components/app-router";
 import { signalrClient } from "./signalR/signalr-client";
+import "semantic-ui-css/semantic.min.css";
 
 export const AppContainerId = "app-content";
 
