@@ -32,9 +32,9 @@ export class GameRegistration extends React.Component<IGameRegistration> {
                         <Input label={i18next.t("gameRegistration.newGame")}
                             value={this.store.newGame}
                             onChange={event => this.store.setNewGame(event.target.value)}
+                            action={<Button onClick={async event => await this.createGame(event)}>{i18next.t("gameRegistration.submit")}</Button>}
                         />
                     </Form.Field>
-                    <Button onClick={async event => await this.createGame(event)}>{i18next.t("gameRegistration.submit")}</Button>
                 </Form>
             </Dimmer.Dimmable>
             <List divided>
@@ -56,7 +56,7 @@ export class GameRegistration extends React.Component<IGameRegistration> {
 
     private async meetGame(event: React.FormEvent, id: string) {
         event.stopPropagation();
-        await this.service.addUserToGame(userContext.userName, id);
+        await this.service.addUserToGame(userContext.userName!, id);
         this.props.routing.push(`${gamePlayRoute}/${id}`);
     }
 

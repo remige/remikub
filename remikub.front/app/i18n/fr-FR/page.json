@@ -1,21 +1,20 @@
 {
-    "appTitle": "Rémikub",
+    "header": {
+        "title": "Rémikub"
+    },
     "login": {
         "titre": "Identifez -vous",
-        "login": "Nom",
+        "login": "Pseudo",
         "submit": "Go"
     },
     "gameRegistration": {
-        "titre": "Rejoindre la partie",
-        "submit": "Créer la partie",
+        "titre": "Créér une nouvelle partie",
+        "submit": "Créer",
         "newGame": "Nom de la partie"
     },
-    "hand": {
-        "drawCard": "Tirer une carte"
-    },
     "board": {
-        "currentUser": "C'est au tour de {{user}}",
         "reset": "Annuler les mouvements en cours",
-        "submit": "Terminer son tour"
+        "submit": "Terminer son tour",
+        "drawCard": "Piocher une carte"
     }
 }

@@ -13,9 +13,10 @@ import { Provider, observer } from "mobx-react";
 import { GameRegistration } from "./game-registration/game-registration";
 import { Board } from "./board/board";
 import { Ref } from "semantic-ui-react";
-import { Header } from "./header/header";
+import { AppHeader } from "./header/app-header";
 export const gameRegistrationRoute = "/game-registration";
 export const gamePlayRoute = "/game-play";
+import "./style.scss";
 
 const routingStore = new RouterStore();
 const history = syncHistoryWithStore(createHashHistory(), routingStore);
@@ -38,14 +39,16 @@ export class AppRouter extends React.Component {
     }
 
     private renderApp() {
-        return <div>
-            <Ref innerRef={this.contextRef}>
-                <Header context={this.contextRef} />
-            </Ref>
+        return <Ref innerRef={this.contextRef}>
             <div>
-                {this.renderContent()}
+                <div id="header">
+                    <AppHeader context={this.contextRef} />
+                </div>
+                <div id="content">
+                    {this.renderContent()}
+                </div>
             </div>
-        </div>;
+        </Ref>;
     }
 
     private renderContent() {
