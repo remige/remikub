@@ -37,8 +37,8 @@ export class GameService {
         return await fetcher.httpGet<ICard[]>(`/games/${gameId}/hand/${userContext.userName}`);
     }
 
-    public async drawCard(gameId: string) {
-        return await fetcher.httpPut<{}>(`/games/${gameId}/hand/${userContext.userName}/draw-card`);
+    public async drawCard(gameId: string, hand: ICard[]) {
+        return await fetcher.httpPut<{}>(`/games/${gameId}/hand/${userContext.userName}/draw-card`, hand);
     }
 
     public async play(gameId: string, board: ICard[][], hand: ICard[]) {

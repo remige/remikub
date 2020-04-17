@@ -16,10 +16,11 @@ export class Card extends React.Component<ICardProps> {
 
     public render() {
         if (this.props.card) {
-            return <div className={`card filled ${this.props.card.color}`}
+            return <div className={`card filled ${this.props.card.color} ${this.isMouving && "onMovement"}`}
                 draggable={true}
-                onDragStart={event => this.onDragStart(event)}>
-                <div className="card-value">{this.props.card.value}</div>
+                onDragStart={event => this.onDragStart(event)}
+                onDragEnd={() => this.setIsMoving(false)}>
+                {!this.isMouving && <div className="card-value">{this.props.card.value}</div>}
             </div>;
         }
         return <div className={`card empty ${this.isOvered ? "" : "hidden"}`}
@@ -30,8 +31,12 @@ export class Card extends React.Component<ICardProps> {
     }
 
     private onDragStart(event: React.DragEvent<HTMLDivElement>) {
+        this.setIsMoving(true);
         event.dataTransfer.setData("text/json", JSON.stringify(this.props.coordinates));
     }
+
+    @observable private isMouving = false;
+    @action private setIsMoving(isMouving: boolean) { this.isMouving = isMouving; }
 
     @observable private isOvered = false;
     @action private setIsOvered(isOvered: boolean) { this.isOvered = isOvered; }

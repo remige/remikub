@@ -6,12 +6,14 @@
 
     public class Game
     {
+        private const int NbCardByColor = 4;
+
         public Game(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
             AvailableCards = new List<Card>();
-            for (int number = 1; number <= 13; number++)
+            for (int number = 1; number <= NbCardByColor; number++)
             {
                 foreach (var color in Enum.GetValues(typeof(CardColor)))
                 {
@@ -24,6 +26,7 @@
         public Guid Id { get; }
         public string Name { get; }
         public string? CurrentUser { get; private set; }
+        public string? Winner { get; private set; }
         public List<List<Card>> Board { get; private set; } = new List<List<Card>>();
         public IDictionary<string, List<Card>> UserHands { get; } = new Dictionary<string, List<Card>>();
         private List<string> Users = new List<string>();
@@ -32,7 +35,7 @@
         public void RegisterUser(string user)
         {
             Users.Add(user);
-            if(string.IsNullOrEmpty(CurrentUser))
+            if (string.IsNullOrEmpty(CurrentUser))
             {
                 CurrentUser = user;
             }
@@ -53,7 +56,7 @@
             {
                 throw new ArgumentException($"No card available");
             }
-            if(checkUserTurn && CurrentUser != user)
+            if (checkUserTurn && CurrentUser != user)
             {
                 throw new ArgumentException($"Not {user} turn");
             }
@@ -62,6 +65,23 @@
             UserHands[user].Add(card);
             AvailableCards.Remove(card);
             EndTurn();
+        }
+
+        public void ReorganizeHand(string user, List<Card> hand)
+        {
+            if (!UserHands.TryGetValue(user, out var actualHand))
+            {
+                throw new ArgumentException($"User {user} is unknown");
+            }
+            if (CurrentUser != user)
+            {
+                throw new ArgumentException($"Not {user} turn");
+            }
+            if (!IsEquivalent(actualHand, hand))
+            {
+                throw new RemikubException(RemikubExceptionCode.HandsAreDifferent);
+            }
+            UserHands[user] = hand;
         }
 
         public void Play(string user, List<List<Card>> board, List<Card> hand)
@@ -100,7 +120,14 @@
 
         private void EndTurn()
         {
-            CurrentUser = Users[(Users.IndexOf(CurrentUser!) + 1) % Users.Count];
+            if (!UserHands[CurrentUser!].Any())
+            {
+                Winner = CurrentUser;
+            }
+            else
+            {
+                CurrentUser = Users[(Users.IndexOf(CurrentUser!) + 1) % Users.Count];
+            }
         }
 
         private bool IsValidCombination(List<Card> combination)

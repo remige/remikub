@@ -16,5 +16,8 @@
         "reset": "Annuler les mouvements en cours",
         "submit": "Terminer son tour",
         "drawCard": "Piocher une carte"
+    },
+    "victory": {
+        "title": "Félicitations {{winner}}"
     }
 }

@@ -22,6 +22,10 @@ export class BoardStore {
 
     @computed public get isUserTurn() { return this._currentUser === userContext.userName; }
 
+    @observable private _winner: string;
+    @computed public get winner() { return this._winner; }
+    @action public declareWinner(user: string) { this._winner = user;}
+
     @action public refreshBoard(board: ICard[][], currentUser: string, users: string[]) {
         this._board = board.map(x => new LinkedList<ICard>(x));
         this._currentUser = currentUser;

@@ -18,5 +18,6 @@
         PlayOrDraw,
         InvalidCardAddedOrRemoved,
         InvalidCombination,
+        HandsAreDifferent,
     }
 }

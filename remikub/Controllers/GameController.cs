@@ -16,7 +16,7 @@
         private readonly IGameRepository _gameRepository;
         private readonly INotifier _notifier;
 
-        public GameController(IGameRepository gameRepository, INotifier notifier )
+        public GameController(IGameRepository gameRepository, INotifier notifier)
         {
             _gameRepository = gameRepository;
             _notifier = notifier;
@@ -126,7 +126,7 @@
 
         [HttpPut]
         [Route("{id}/hand/{user}/draw-card")]
-        public async Task<ActionResult> DrawCard(Guid id, string user)
+        public async Task<ActionResult> DrawCard(Guid id, string user, [FromBody] List<Card> hand)
         {
             // TODO : this is absolutly not secured, should be done with authentication
             var game = _gameRepository.GetGame(id);
@@ -139,10 +139,10 @@
                 return NotFound(user);
             }
 
+            game.ReorganizeHand(user, hand);
             game.DrawCard(user);
 
-            // Shoudl be done by event sourcing...
-            await _notifier.NotifyUserHasPlayed(id, user);
+            await NotifyEndTurn(id, user, game.Winner);
             return Ok();
         }
 
@@ -164,9 +164,21 @@
 
             game.Play(user, command.Board, command.Hand);
 
-            // Shoudl be done by event sourcing...
-            await _notifier.NotifyUserHasPlayed(id, user);
+            await NotifyEndTurn(id, user, game.Winner);
             return Ok();
+        }
+
+        private async Task NotifyEndTurn(Guid gameId, string user, string? winner)
+        {
+            // Should be done by event sourcing...
+            if (string.IsNullOrEmpty(winner))
+            {
+                await _notifier.NotifyUserHasPlayed(gameId, user);
+            }
+            else
+            {
+                await _notifier.NotifyUserHasWon(gameId, user);
+            }
         }
 
         public class PlayCommand

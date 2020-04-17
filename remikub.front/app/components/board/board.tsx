@@ -12,6 +12,8 @@ import i18next from "i18next";
 import { signalrClient } from "../../signalR/signalr-client";
 import { IUserHasPlayed } from "../../model/iuser-has-played";
 import { Label, Icon, Popup } from "semantic-ui-react";
+import { IUserHasWon } from "../../model/iuser-has-won";
+import { Victory } from "./victory";
 
 interface IBoardProps {
     routing: RouterStore;
@@ -31,10 +33,18 @@ export class Board extends React.Component<IBoardProps> {
                 this.refresh();
             }
         });
+        signalrClient.register("UserHasWon", (message: IUserHasWon) => {
+            if (message.gameId === this.props.match.params.gameId) {
+                this.store.declareWinner(message.user);
+            }
+        });
         await this.refresh();
     }
 
-    public async componentWillUnmount() { signalrClient.unregister("UserHasPlayed"); }
+    public async componentWillUnmount() {
+        signalrClient.unregister("UserHasPlayed");
+        signalrClient.unregister("UserHasWon");
+    }
 
     public render() {
         return <div className="board">
@@ -44,7 +54,7 @@ export class Board extends React.Component<IBoardProps> {
                 </div>
                 {this.store.isUserTurn && <div>
                     <Popup content={i18next.t("board.reset")} trigger={
-                        <Icon link size="huge" color="red" name="cancel" to onClick={async () => await this.refresh()}></Icon>} />
+                        <Icon link size="huge" color="red" name="cancel" onClick={async () => await this.refresh()}></Icon>} />
                     <Popup content={i18next.t("board.submit")} trigger={
                         <Icon link={this.store.moved}
                             disabled={!this.store.moved}
@@ -59,6 +69,8 @@ export class Board extends React.Component<IBoardProps> {
             <Combination combination={new LinkedList<ICard>([])} combinationId={this.store.board.length} store={this.store} place="board" />
 
             <Hand store={this.store} service={this.service} gameId={this.props.match.params.gameId} />
+
+            <Victory store={this.store} />;
         </div>;
     }
 
@@ -68,7 +80,7 @@ export class Board extends React.Component<IBoardProps> {
     }
 
     private async drawCard() {
-        await this.service.drawCard(this.props.match.params.gameId);
+        await this.service.drawCard(this.props.match.params.gameId, this.store.hand.map(x => x));
         await this.refresh();
     }
 

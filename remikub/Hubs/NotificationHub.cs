@@ -7,6 +7,7 @@
     public interface INotifier
     {
         Task NotifyUserHasPlayed(Guid gameId, string user);
+        Task NotifyUserHasWon(Guid gameId, string user);
     }
 
     public class Notifier : INotifier
@@ -21,6 +22,11 @@
         public async Task NotifyUserHasPlayed(Guid gameId, string user)
         {
             await _notificationHub.Clients.All.SendAsync("UserHasPlayed", new UserHasPlayed(gameId, user));
+        }
+
+        public async Task NotifyUserHasWon(Guid gameId, string user)
+        {
+            await _notificationHub.Clients.All.SendAsync("UserHasWon", new UserHasWon(gameId, user));
         }
     }
 
