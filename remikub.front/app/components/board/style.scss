@@ -5,8 +5,11 @@
   }
 }
 
+.combination {
+  padding: 5px 0;
+}
+
 .card {
-  margin: 5px;
   height: 100px;
   width: 50px;
   display: flex;
@@ -19,15 +22,17 @@
   &.filled {
     background-color: wheat;
     cursor: pointer;
-    border-style: outset;
+    // border-style: outset;
   }
 
   &.empty {
     border-style: dotted;
+    transition: width 0.5s;
 
     &.hidden {
-      width: 5px;
+      width: 10px;
       border-style: none;
+      transition: none;
     }
   }
 

@@ -17,7 +17,7 @@ interface ICombinationProps {
 export class Combination extends React.Component<ICombinationProps> {
 
     public render() {
-        return <div style={{ display: "flex" }}>
+        return <div style={{ display: "flex" }} className="combination" >
             <Card moveCard={fromCoorinates => this.props.store.moveCard(fromCoorinates, {
                 combinationId: this.props.combinationId,
                 rank: 0,
