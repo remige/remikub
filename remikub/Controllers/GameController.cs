@@ -9,17 +9,20 @@
     using remikub.Repository;
     using remikub.Hubs;
     using Microsoft.AspNetCore.SignalR;
+    using remikub.Services;
 
     [Route("/api/v1/games")]
     public class GameController : Controller
     {
         private readonly IGameRepository _gameRepository;
         private readonly INotifier _notifier;
+        private readonly IAutomaticPlayer _automaticPlayer;
 
-        public GameController(IGameRepository gameRepository, INotifier notifier)
+        public GameController(IGameRepository gameRepository, INotifier notifier, IAutomaticPlayer automaticPlayer)
         {
             _gameRepository = gameRepository;
             _notifier = notifier;
+            _automaticPlayer = automaticPlayer;
         }
 
         [HttpPost]
@@ -157,10 +160,6 @@
             {
                 return NotFound(id);
             }
-            if (!game.UserHands.ContainsKey(user))
-            {
-                return NotFound(user);
-            }
 
             game.Play(user, command.Board, command.Hand);
 
@@ -168,6 +167,23 @@
             return Ok();
         }
 
+        [HttpPut]
+        [Route("{id}/play/{user}/auto")]
+        public async Task<ActionResult> PlayAuto(Guid id, string user)
+        {
+            // TODO : this is absolutly not secured, should be done with authentication
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+
+            _automaticPlayer.AutoPlay(game, user);
+
+            await NotifyEndTurn(id, user, game.Winner);
+            return Ok();
+        }
+        
         private async Task NotifyEndTurn(Guid gameId, string user, string? winner)
         {
             // Should be done by event sourcing...

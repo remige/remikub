@@ -44,4 +44,8 @@ export class GameService {
     public async play(gameId: string, board: ICard[][], hand: ICard[]) {
         return await fetcher.httpPut<{}>(`/games/${gameId}/play/${userContext.userName}`, { board, hand });
     }
+
+    public async autoPlay(gameId: string) {
+        return await fetcher.httpPut<{}>(`/games/${gameId}/play/${userContext.userName}/auto`);
+    }
 }

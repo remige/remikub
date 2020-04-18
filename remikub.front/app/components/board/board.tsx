@@ -54,7 +54,8 @@ export class Board extends React.Component<IBoardProps> {
                 </div>
                 {this.store.isUserTurn && <div>
                     <Popup content={i18next.t("board.reset")} trigger={
-                        <Icon link size="huge" color="red" name="cancel" onClick={async () => await this.refresh()}></Icon>} />
+                        <Icon link={this.store.moved}
+                            disabled={!this.store.moved} size="huge" color="red" name="cancel" onClick={async () => await this.refresh()}></Icon>} />
                     <Popup content={i18next.t("board.submit")} trigger={
                         <Icon link={this.store.moved}
                             disabled={!this.store.moved}
@@ -63,6 +64,9 @@ export class Board extends React.Component<IBoardProps> {
                         <Icon link={!this.store.moved}
                             disabled={this.store.moved}
                             size="huge" color="green" name="plus" onClick={async () => await this.drawCard()}></Icon>} />
+                    <Popup content={i18next.t("board.autoPlay")} trigger={
+                        <Icon link
+                            size="huge" color="green" name="help circle" onClick={async () => await this.autoplay()}></Icon>} />
                 </div>}
             </div>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}
@@ -70,18 +74,20 @@ export class Board extends React.Component<IBoardProps> {
 
             <Hand store={this.store} service={this.service} gameId={this.props.match.params.gameId} />
 
-            <Victory store={this.store} />;
+            <Victory store={this.store} />
         </div>;
     }
 
     public async play() {
         await this.service.play(this.props.match.params.gameId, this.store.board.map(x => x.map(y => y)), this.store.hand.map(x => x));
-        await this.refresh();
     }
 
     private async drawCard() {
         await this.service.drawCard(this.props.match.params.gameId, this.store.hand.map(x => x));
-        await this.refresh();
+    }
+
+    private async autoplay() {
+        await this.service.autoPlay(this.props.match.params.gameId);
     }
 
     public async refresh() {
