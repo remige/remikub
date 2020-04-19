@@ -65,7 +65,7 @@ namespace remikub
                 });
 */
             services.AddTransient<INotifier, Notifier>();
-            services.AddSingleton<IAutomaticPlayer, AutomaticPlayer>();
+            services.AddSingleton<IAutomaticPlayer, BruteForcePlayer /* AutomaticPlayer*/>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

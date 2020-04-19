@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class CombinationDisposition
     {
@@ -9,28 +10,28 @@
         public CombinationDisposition(List<int> combinationSizes)
         {
             if (combinationSizes is null) { throw new ArgumentNullException(nameof(combinationSizes)); }
-            CombinationSizes = combinationSizes;
-            CombinationSizes.Sort();
+            CombinationSizes = combinationSizes.OrderByDescending(x => x).ToList();
         }
 
         public List<int> CombinationSizes { get; }
 
-        private const int minCombinationSize = 3;
-        private const int maxCombinationSize = 13;
+        public const int MinCombinationSize = 3;
+        public const int MaxCombinationSize = 5;
+
         public static Dictionary<int, HashSet<CombinationDisposition>> ComputeBoardDisposition(int nbCards)
         {
             var dispostionsByNbCards = new Dictionary<int, HashSet<CombinationDisposition>>()
             {
-                { minCombinationSize , new HashSet<CombinationDisposition> { new CombinationDisposition(minCombinationSize) } }
+                { MinCombinationSize , new HashSet<CombinationDisposition> { new CombinationDisposition(MinCombinationSize) } }
             };
 
-            for (int i = minCombinationSize + 1; i <= nbCards; i++)
+            for (int i = MinCombinationSize + 1; i <= nbCards; i++)
             {
                 var dispositions = new HashSet<CombinationDisposition>();
-                if (i % minCombinationSize == 0)
+                if (i % MinCombinationSize == 0)
                 {
                     var newGroup = new List<int>();
-                    for (int j = 0; j < i / minCombinationSize; j++) { newGroup.Add(minCombinationSize); }
+                    for (int j = 0; j < i / MinCombinationSize; j++) { newGroup.Add(MinCombinationSize); }
                     dispositions.Add(new CombinationDisposition(newGroup));
                 }
 
@@ -64,7 +65,7 @@
                     if (i == j)
                     {
                         var value = CombinationSizes[j] + 1;
-                        if (value > maxCombinationSize)
+                        if (value > MaxCombinationSize)
                         {
                             ignore = true;
                             break;

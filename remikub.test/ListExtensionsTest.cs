@@ -14,7 +14,7 @@ namespace remikub.test
         [Test]
         public void CombinationDisposition_Test()
         {
-            var results = CombinationDisposition.ComputeBoardDisposition(56);
+            var results = CombinationDisposition.ComputeBoardDisposition(200);
 
             using (var fs = new StreamWriter("D:/test.txt"))
             {
