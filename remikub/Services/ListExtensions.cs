@@ -1,27 +1,31 @@
 ﻿namespace remikub.Services
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using remikub.Services.BruteForce;
 
     public static class ListExtensions
     {
-        public static IEnumerable<IEnumerable<T>> GetCombinaisons<T>(this IEnumerable<T> source, int combinaisonCount)
+
+        public static List<List<List<T>>> GetCombinaisons<T>(this List<T> source)
         {
-            if(combinaisonCount == 1)
+            var result = new List<List<List<T>>> { new List<List<T>> { source } };
+            if (source.Count == 1)
             {
-                return source.Select(x => new List<T> { x });
+                return result;
             }
 
-            var list = new List<IEnumerable<T>>();
-            foreach (var row in source)
+            Parallel.ForEach(source, new ParallelOptions { MaxDegreeOfParallelism = 10 }, row =>
             {
-                var rowList = new List<T> { row };
-                foreach (var subCombinaison in GetCombinaisons(source.Except(rowList), combinaisonCount - 1))
+                var subCombinations = source.Except(new List<T> { row }).ToList().GetCombinaisons();
+                foreach (var subCombination in subCombinations)
                 {
-                    list.Add(subCombinaison.Union(rowList));
+                    result.Add(new List<List<T>> { new List<T> { row } }.Union(subCombination).ToList());
                 }
-            }
-            return list;
+            });
+            return result;
         }
     }
 }

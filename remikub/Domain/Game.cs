@@ -105,7 +105,7 @@
                 throw new RemikubException(RemikubExceptionCode.InvalidCardAddedOrRemoved);
             }
 
-            var invalidCombinations = board.Where(combination => !IsValidCombination(combination))
+            var invalidCombinations = board.Where(combination => !combination.IsValidCombination())
                                             .Select((_, combinationId) => combinationId.ToString())
                                             .ToArray();
             if (invalidCombinations.Any())
@@ -128,45 +128,6 @@
             {
                 CurrentUser = Users[(Users.IndexOf(CurrentUser!) + 1) % Users.Count];
             }
-        }
-
-        private bool IsValidCombination(List<Card> combination)
-        {
-            if (combination.Count < 3)
-            {
-                return false;
-            }
-
-            return IsValidSet(combination) || IsValidFlush(combination);
-        }
-
-        private bool IsValidSet(List<Card> combination)
-        {
-            var colors = new HashSet<CardColor>();
-            var values = new HashSet<int>();
-            combination.ForEach(x =>
-            {
-                colors.Add(x.Color);
-                values.Add(x.Value);
-            });
-            return colors.Count == combination.Count && values.Count == 1;
-        }
-
-        private bool IsValidFlush(List<Card> combination)
-        {
-            CardColor? currentColor = null;
-            int? currentValue = null;
-            foreach (var card in combination)
-            {
-                if (currentValue != null && currentValue + 1 != card.Value ||
-                    currentColor != null && currentColor != card.Color)
-                {
-                    return false;
-                }
-                currentColor = card.Color;
-                currentValue = card.Value;
-            }
-            return true;
         }
 
         private bool IsEquivalent(IEnumerable<Card> cardsSource, IEnumerable<Card> cardsTarget)

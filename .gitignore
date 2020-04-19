@@ -2,4 +2,6 @@
 /remikub/wwwroot/index.html
 /remikub/bin
 /remikub/obj
+/remikub.test/bin
+/remikub.test/obj
 /.vs
