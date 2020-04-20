@@ -13,6 +13,7 @@ namespace remikub
     using remikub.Hubs;
     using remikub.Repository;
     using remikub.Services;
+    using remikub.Services.BruteForce;
     using StackExchange.Redis;
 
     public class Startup
@@ -65,7 +66,7 @@ namespace remikub
                 });
 */
             services.AddTransient<INotifier, Notifier>();
-            services.AddSingleton<IAutomaticPlayer, BruteForcePlayer /* AutomaticPlayer*/>();
+            services.AddSingleton<IAutomaticPlayer, BruteForcePlayer2 /* AutomaticPlayer*/>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

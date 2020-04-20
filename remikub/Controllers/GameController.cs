@@ -10,6 +10,7 @@
     using remikub.Hubs;
     using Microsoft.AspNetCore.SignalR;
     using remikub.Services;
+    using System.Threading;
 
     [Route("/api/v1/games")]
     public class GameController : Controller
@@ -167,21 +168,33 @@
             return Ok();
         }
 
+
+        public static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
         [HttpPut]
         [Route("{id}/play/{user}/auto")]
         public async Task<ActionResult> PlayAuto(Guid id, string user)
         {
             // TODO : this is absolutly not secured, should be done with authentication
-            var game = _gameRepository.GetGame(id);
-            if (game is null)
-            {
-                return NotFound(id);
+
+            await semaphoreSlim.WaitAsync();
+            try { 
+                var game = _gameRepository.GetGame(id);
+                if (game is null)
+                {
+                    return NotFound(id);
+                }
+
+                _automaticPlayer.AutoPlay(game, user);
+
+                await NotifyEndTurn(id, user, game.Winner);
+                return Ok();
             }
-
-            _automaticPlayer.AutoPlay(game, user);
-
-            await NotifyEndTurn(id, user, game.Winner);
-            return Ok();
+            finally
+            {
+                //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
+                //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
+                semaphoreSlim.Release();
+            }
         }
         
         private async Task NotifyEndTurn(Guid gameId, string user, string? winner)

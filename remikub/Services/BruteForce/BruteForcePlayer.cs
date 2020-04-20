@@ -1,6 +1,7 @@
 ﻿namespace remikub.Services
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using remikub.Domain;
@@ -10,10 +11,10 @@
     {
         public void AutoPlay(Game game, string user)
         {
-            for (int i = Math.Min(6, game.UserHands[user].Count); i > 0; i--)
+            for (int i = Math.Min(3, game.UserHands[user].Count); i > 0; i--)
             {
                 var move = Play(game, user, i);
-                if(move != null)
+                if (move != null)
                 {
                     game.Play(user, move.NewBoard, game.UserHands[user].Except(move.PlayedCards).ToList());
                     return;
@@ -26,9 +27,9 @@
         {
             foreach (var cardsToPlay in GetAvailableCombinations(game.UserHands[user], tryNbCard))
             {
-                var allCards = game.Board.SelectMany(x => x).Union(cardsToPlay).ToList();
+                var allCards = new List<Card>(game.Board.SelectMany(x => x).Union(cardsToPlay).ToList());
 
-                if(allCards.Count < CombinationDisposition.MinCombinationSize)
+                if (allCards.Count < CombinationDisposition.MinCombinationSize)
                 {
                     return null;
                 }
@@ -46,18 +47,6 @@
             return null;
         }
 
-        public class Move
-        {
-            public Move(List<Card> playedCards, List<List<Card>> newBoard)
-            {
-                PlayedCards = playedCards;
-                NewBoard = newBoard;
-            }
-
-            public List<Card> PlayedCards { get; }
-            public List<List<Card>> NewBoard { get; }
-        }
-
         private IDictionary<string, List<List<Card>>?> CombineCardCache = new Dictionary<string, List<List<Card>>?>();
         public List<List<Card>>? CombineCards(List<Card> cards, List<int> combinationSizes)
         {
@@ -73,50 +62,62 @@
 
         private List<List<Card>>? CombineCardsWithoutCache(List<Card> cards, List<int> combinationSizes)
         {
-            foreach (var combinationSize in combinationSizes)
-            {
-                var validCombinations = GetAvailableCombinations(cards, combinationSize).Where(x => x.IsValidCombination()).ToList();
-                if (!validCombinations.Any())
-                {
-                    return null;
-                }
-                foreach (var combination in validCombinations)
-                {
-                    var newSizes = new List<int>(combinationSizes);
-                    newSizes.Remove(combinationSize);
-                    if (!newSizes.Any())
-                    {
-                        return new List<List<Card>> { combination };
-                    }
+            var firstSize = combinationSizes.First();
 
-                    var availableCombinations = CombineCards(cards.Except(combination).ToList(), newSizes);
-                    if (availableCombinations != null)
-                    {
-                        availableCombinations.Add(combination);
-                        return availableCombinations;
-                    }
-                }
+            var validCombinations = GetAvailableCombinations(cards, firstSize);
+            if (!validCombinations.Any())
+            {
                 return null;
+            }
+
+            var newSizes = combinationSizes.Skip(1).ToList();
+            foreach (var combination in validCombinations)
+            {
+                if (!newSizes.Any())
+                {
+                    return new List<List<Card>> { combination };
+                }
+
+                var availableCombinations = CombineCards(cards.Except(combination).ToList(), newSizes);
+                if (availableCombinations != null)
+                {
+                    availableCombinations.Add(combination);
+                    return availableCombinations;
+                }
             }
             return null;
         }
 
-        private Dictionary<(int, int), List<int[]>> AvailableGroupsCache = new Dictionary<(int, int), List<int[]>>();
+        private IDictionary<(int, int), List<int[]>> AvailableGroupsCache = new ConcurrentDictionary<(int, int), List<int[]>>();
 
         public List<List<Card>> GetAvailableCombinations(List<Card> cards, int combinationSize)
         {
+            var cardsWithoutDuplicates = new Dictionary<string, Card>();
+            foreach (var card in cards)
+            {
+                var cardKey = $"{card.Color}${card.Value}";
+                if (!cardsWithoutDuplicates.ContainsKey(cardKey))
+                {
+                    cardsWithoutDuplicates.Add(cardKey, card);
+                }
+            }
+            var uniqueCards = cardsWithoutDuplicates.Values.ToArray();
             var combinations = new List<List<Card>>();
-            foreach (var group in GetAvailableGroups(cards.Count, combinationSize))
+            foreach (var group in GetAvailableGroups(uniqueCards.Length, combinationSize))
             {
                 var combination = new List<Card>();
                 for (int i = 0; i < group.Length; i++)
                 {
                     if (group[i] == 1)
                     {
-                        combination.Add(cards[i]);
+                        combination.Add(uniqueCards[i]);
                     }
                 }
-                combinations.Add(combination.OrderBy(x => x.Value).ToList());
+                combination = combination.OrderBy(x => x.Value).ToList();
+                if (combination.IsValidCombination())
+                {
+                    combinations.Add(combination);
+                }
             }
             return combinations;
         }
@@ -130,10 +131,8 @@
             AvailableGroupsCache.Add((totalSize, groupSize), availableGroups);
             return availableGroups;
         }
-
         private List<int[]> GetAvailableGroupsNotCached(int totalSize, int groupSize)
         {
-            // TODO : should be cached
             if (groupSize == 0)
             {
                 return new List<int[]> { CreateArray(totalSize, 0) };

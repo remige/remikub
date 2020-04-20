@@ -6,7 +6,7 @@
 
     public class Game
     {
-        private const int NbCardByColor = 13;
+        public const int NbCardByColor = 13;
 
         public Game(string name)
         {
@@ -18,7 +18,6 @@
                 foreach (var color in Enum.GetValues(typeof(CardColor)))
                 {
                     AvailableCards.Add(new Card(number, (CardColor)color!));
-                    AvailableCards.Add(new Card(number, (CardColor)color));
                 }
             }
         }
@@ -86,6 +85,7 @@
 
         public void Play(string user, List<List<Card>> board, List<Card> hand)
         {
+            Console.WriteLine("Play");
             if (!UserHands.TryGetValue(user, out var actualHand))
             {
                 throw new ArgumentException($"User {user} is unknown");
@@ -113,6 +113,7 @@
                 throw new RemikubException(RemikubExceptionCode.InvalidCombination, invalidCombinations);
             }
 
+            Console.WriteLine($"Update board => {board.Count} combinations");
             Board = board;
             UserHands[user] = hand;
             EndTurn();
