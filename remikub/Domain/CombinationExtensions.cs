@@ -16,9 +16,9 @@
             return true;
         }
 
-        public static bool IsValidCombination(this List<Card> combination)
+        public static bool IsValidCombination(this List<Card> combination, int minSize = 3)
         {
-            if (combination.Count < 3)
+            if (combination.Count < minSize)
             {
                 return false;
             }

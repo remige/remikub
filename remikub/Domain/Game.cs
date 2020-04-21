@@ -47,6 +47,7 @@
 
         public void DrawCard(string user, bool checkUserTurn = true)
         {
+            Console.WriteLine("Draw card");
             if (!UserHands.ContainsKey(user))
             {
                 throw new ArgumentException($"User {user} is unknown");
