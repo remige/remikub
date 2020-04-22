@@ -9,7 +9,7 @@
         }
         public int Value { get; }
         public CardColor Color { get; }
-
+        public override string ToString() => $"{Value}_{Color}";
         public bool IsEquivalent(Card card) => Value == card.Value && Color == card.Color;
     }
 

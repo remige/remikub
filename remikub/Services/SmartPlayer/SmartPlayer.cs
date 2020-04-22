@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Drawing;
     using System.Linq;
     using remikub.Domain;
 
@@ -11,8 +10,16 @@
         private static CardValueComparer _cardValueComparer = new CardValueComparer();
         public void AutoPlay(Game game, string user)
         {
-            throw new System.NotImplementedException();
+            var newBoard = Try(game.UserHands[user].Concat(game.Board.SelectMany(x => x)).ToList());
+            if(newBoard is null)
+            {
+                game.DrawCard(user);
+            } else
+            {
+                game.Play(user, newBoard, new List<Card>());
+            }
         }
+
 
         public static List<List<CardValue>> GetAllValidCombinations(List<Card> cards)
         {
@@ -60,52 +67,64 @@
                 }
             }
             return combinations;
-
-            /*
-var cardValues = cards.Select(x => new CardValue(x.Value, x.Color)).Distinct(new CardValueComparer()).OrderBy(x => $"{x.Value}{x.Color}").ToList();
-
-for (int i = 0; i < cardValues.Count; i++)
-{
-    var currentCardValue = cardValues[i];
-    var currentSet = new List<CardValue>();
-    int j = 0;
-    CardValue nextValue;
-    while (i + j < cardValues.Count && (nextValue = cardValues[i + j]).Value == currentCardValue.Value)
-    {
-
-        currentSet.Add(nextValue);
-        if (currentSet.Count >= 3)
-        {
-            combinations.Add(currentSet);
-            currentSet = new List<CardValue>(currentSet);
-        }
-        if (currentSet.Count == 4)
-        {
-            combinations.Add(new List<CardValue> { currentSet[0], currentSet[2], currentSet[3] }  );
-            combinations.Add(new List<CardValue> { currentSet[0], currentSet[1], currentSet[3] });
-        }
-        j++;
-    }
- }
- */
         }
 
-        public class CardValue
+        public static List<List<Card>>? Try(List<Card> cards)
         {
-            public CardValue(Card card)
+            var metadatas = BuildMetadata(cards);
+            if(metadatas.Any(x => x.Value.Combinations.Count < x.Value.Cards.Count))
             {
-                Value = card.Value;
-                Color = card.Color;
+                return null;
             }
 
-            public CardValue(int value, CardColor color)
+            foreach(var combination in metadatas.Values.OrderBy(x => x.Combinations.Count).First().Combinations)
             {
-                Value = value;
-                Color = color;
+                var combinationCards = combination.Select(x => metadatas[x.Key].Cards.First()).ToList();
+
+                var newBoard = cards.Except(combinationCards).ToList();
+                if(!newBoard.Any())
+                {
+                    return new List<List<Card>> { combinationCards };
+                }
+                var nextCombinations = Try(newBoard);
+                if(nextCombinations != null)
+                {
+                    nextCombinations.Add(combinationCards);
+                    return nextCombinations;
+                }
             }
 
-            public int Value { get; }
-            public CardColor Color { get; }
+            return null;
+        }
+
+        public static bool IsSolvable(List<Card> cards)
+        {
+            var metadatas = BuildMetadata(cards).Values.OrderBy(x => x.Combinations.Count);
+            return metadatas.Any(x => x.Combinations.Count >= x.Cards.Count);
+        }
+
+        public static IDictionary<string, CardMetadata> BuildMetadata(List<Card> cards)
+        {
+            var metadatas = new Dictionary<string, CardMetadata>();
+            foreach(var card in cards)
+            {
+                var cardValue = new CardValue(card);
+                if (!metadatas.ContainsKey(cardValue.Key))
+                {
+                    metadatas.Add(cardValue.Key, new CardMetadata(cardValue));
+                }
+                metadatas[cardValue.Key].AddCard(card);
+            }
+
+
+            foreach (var combination in GetAllValidCombinations(cards))
+            {
+                foreach (var cardValue in combination)
+                {
+                    metadatas[cardValue.Key].AddCombination(combination);
+                }
+            }
+            return metadatas;
         }
 
         public class CardValueComparer : IEqualityComparer<CardValue>

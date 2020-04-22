@@ -6,7 +6,7 @@
 
     public class Game
     {
-        public const int NbCardByColor = 13;
+        public const int NbCardByColor = 5;
 
         public Game(string name)
         {
