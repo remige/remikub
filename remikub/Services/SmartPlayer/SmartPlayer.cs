@@ -10,16 +10,32 @@
         private static CardValueComparer _cardValueComparer = new CardValueComparer();
         public void AutoPlay(Game game, string user)
         {
-            var newBoard = Try(game.UserHands[user].Concat(game.Board.SelectMany(x => x)).ToList());
-            if(newBoard is null)
+            List<Card>? handCombination;
+            while((handCombination = GetHandValidCombination(game, user)) != null)
+            {
+                var newBoard = new List<List<Card>>(game.Board);
+                newBoard.Add(handCombination);
+                game.Play(user, newBoard, game.UserHands[user].Except(handCombination).ToList());
+            }
+
+            var victoryBoard = Try(game.Board.SelectMany(x => x).Concat(game.UserHands[user]).ToList());
+            if(victoryBoard != null)
+            {
+                game.Play(user, victoryBoard, new List<Card>());
+            }
+
+            if(handCombination is null && victoryBoard is null)
             {
                 game.DrawCard(user);
-            } else
-            {
-                game.Play(user, newBoard, new List<Card>());
             }
         }
 
+        private List<Card>? GetHandValidCombination(Game game, string user)
+        {
+            var metadatas = BuildMetadata(game.UserHands[user]);
+            return metadatas.Values.FirstOrDefault(x => x.Combinations.Any())?
+                .Combinations.First().Select(x => metadatas[x.Key].Cards.First()).ToList(); ;
+        }
 
         public static List<List<CardValue>> GetAllValidCombinations(List<Card> cards)
         {

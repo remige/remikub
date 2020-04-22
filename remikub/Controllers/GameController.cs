@@ -200,12 +200,9 @@
         private async Task NotifyEndTurn(Guid gameId, string user, string? winner)
         {
             // Should be done by event sourcing...
-            if (string.IsNullOrEmpty(winner))
-            {
-                await _notifier.NotifyUserHasPlayed(gameId, user);
-            }
-            else
-            {
+            await _notifier.NotifyUserHasPlayed(gameId, user);
+            if (!string.IsNullOrEmpty(winner))
+            { 
                 await _notifier.NotifyUserHasWon(gameId, user);
             }
         }
