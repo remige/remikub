@@ -64,9 +64,9 @@ export class Board extends React.Component<IBoardProps> {
                         <Icon link={!this.store.moved}
                             disabled={this.store.moved}
                             size="huge" color="green" name="plus" onClick={async () => await this.drawCard()}></Icon>} />
-                    <Popup content={i18next.t("board.autoPlay")} trigger={
+                    <Popup content={i18next.t("board.addBot")} trigger={
                         <Icon link
-                            size="huge" color="green" name="help circle" onClick={async () => await this.autoplay()}></Icon>} />
+                            size="huge" color="green" name="computer" onClick={async () => await this.addBot()}></Icon>} />
                 </div>}
             </div>
             {this.store.board.map((combinaison, idx) => <Combination key={idx} combination={combinaison} combinationId={idx} store={this.store} place="board" />)}
@@ -86,8 +86,9 @@ export class Board extends React.Component<IBoardProps> {
         await this.service.drawCard(this.props.match.params.gameId, this.store.hand.map(x => x));
     }
 
-    private async autoplay() {
-        await this.service.autoPlay(this.props.match.params.gameId);
+    private async addBot() {
+        await this.service.addBot(this.props.match.params.gameId);
+        await this.refresh();
     }
 
     public async refresh() {

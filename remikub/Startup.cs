@@ -1,7 +1,5 @@
 namespace remikub
 {
-    using System;
-    using System.Net;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -13,9 +11,7 @@ namespace remikub
     using remikub.Hubs;
     using remikub.Repository;
     using remikub.Services;
-    using remikub.Services.BruteForce;
     using remikub.Services.SmartPlayer;
-    using StackExchange.Redis;
 
     public class Startup
     {

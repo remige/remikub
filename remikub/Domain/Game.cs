@@ -29,12 +29,16 @@
         public string? Winner { get; private set; }
         public List<List<Card>> Board { get; private set; } = new List<List<Card>>();
         public IDictionary<string, List<Card>> UserHands { get; } = new Dictionary<string, List<Card>>();
-        private List<string> Users = new List<string>();
+        public List<string> Users = new List<string>(); 
         private List<Card> AvailableCards { get; }
 
-        public void RegisterUser(string user)
+        public void RegisterUser(string user, bool isBot = false)
         {
             Users.Add(user);
+            if(isBot)
+            {
+                Bots.Add(user);
+            }
             if (string.IsNullOrEmpty(CurrentUser))
             {
                 CurrentUser = user;
@@ -45,6 +49,9 @@
                 DrawCard(user, false);
             }
         }
+
+        private HashSet<string> Bots = new HashSet<string>();
+        public bool IsBot(string user) => Bots.Contains(user);
 
         public void DrawCard(string user, bool checkUserTurn = true)
         {
@@ -65,7 +72,6 @@
             var card = AvailableCards[new Random().Next(0, AvailableCards.Count - 1)];
             UserHands[user].Add(card);
             AvailableCards.Remove(card);
-            EndTurn();
         }
 
         public void ReorganizeHand(string user, List<Card> hand)
@@ -118,11 +124,11 @@
             Console.WriteLine($"Update board => {board.Count} combinations");
             Board = board;
             UserHands[user] = hand;
-            EndTurn();
         }
 
-        private void EndTurn()
+        public void EndTurn()
         {
+            // Should check if has played
             if (!UserHands[CurrentUser!].Any())
             {
                 Winner = CurrentUser;

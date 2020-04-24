@@ -139,7 +139,7 @@
              => ( 1b, 1r, 1o ) / (1b, 2b, 3b, 4b) / (2b, 3b, 4b) / (1b, 2b, 3b)
              We should exlude (1b, 2b, 3b, 4b) combination, so we will play it first : once this combination is played, the IsSolvable will returns FALSE
              */
-            foreach (var combination in combinations) 
+            foreach (var combination in combinations.OrderByDescending(x => x.Count)) 
             {
                 var combinationCards = combination.Select(x => metadatas[x.Key].Cards.First()).ToList();
 

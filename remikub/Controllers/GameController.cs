@@ -61,7 +61,7 @@
 
         [HttpGet]
         [Route("{id}/users")]
-        public ActionResult<ICollection<string>> AddUser(Guid id)
+        public ActionResult<ICollection<string>> GetUsers(Guid id)
         {
             var game = _gameRepository.GetGame(id);
             if (game is null)
@@ -84,6 +84,22 @@
             _gameRepository.SaveGame(game);
             return Ok();
         }
+
+        [HttpPut]
+        [Route("{id}/users/bot")]
+        public ActionResult AddBot(Guid id)
+        {
+            var game = _gameRepository.GetGame(id);
+            if (game is null)
+            {
+                return NotFound(id);
+            }
+
+            game.RegisterUser(botsName.FirstOrDefault(x => !game.Users.Contains(x)) ?? Guid.NewGuid().ToString(), true);
+            _gameRepository.SaveGame(game);
+            return Ok();
+        }
+        private static HashSet<string> botsName = new HashSet<string> { "BogossDu93", "LicorneCeleste", "Brandon", "LordOfTheBoloss" };
 
         [HttpGet]
         [Route("{id}/current-user")]
@@ -146,7 +162,7 @@
             game.ReorganizeHand(user, hand);
             game.DrawCard(user);
 
-            await NotifyEndTurn(id, user, game.Winner);
+            await EndTurn(game, user);
             return Ok();
         }
 
@@ -164,7 +180,7 @@
 
             game.Play(user, command.Board, command.Hand);
 
-            await NotifyEndTurn(id, user, game.Winner);
+            await EndTurn(game, user);
             return Ok();
         }
 
@@ -182,7 +198,7 @@
 
                 _automaticPlayer.AutoPlay(game, user);
 
-                await NotifyEndTurn(id, user, game.Winner);
+                await EndTurn(game, user);
 
                 await Task.Delay(500);
 
@@ -209,7 +225,7 @@
 
                 _automaticPlayer.AutoPlay(game, user);
 
-                await NotifyEndTurn(id, user, game.Winner);
+                await EndTurn(game, user);
                 return Ok();
             }
             finally
@@ -220,13 +236,20 @@
             }
         }
         
-        private async Task NotifyEndTurn(Guid gameId, string user, string? winner)
+        private async Task EndTurn(Game game, string user)
         {
+            game.EndTurn();
+
             // Should be done by event sourcing...
-            await _notifier.NotifyUserHasPlayed(gameId, user);
-            if (!string.IsNullOrEmpty(winner))
+            await _notifier.NotifyUserHasPlayed(game.Id, user);
+            if (!string.IsNullOrEmpty(game.Winner))
             { 
-                await _notifier.NotifyUserHasWon(gameId, user);
+                await _notifier.NotifyUserHasWon(game.Id, game.Winner);
+            }
+
+            if(game.IsBot(game.CurrentUser!))
+            {
+                PlayAuto(game.Id, game.CurrentUser);
             }
         }
 

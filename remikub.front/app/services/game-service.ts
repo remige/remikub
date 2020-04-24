@@ -49,4 +49,8 @@ export class GameService {
     public async autoPlay(gameId: string) {
         return await fetcher.httpPut<{}>(`/games/${gameId}/play/${userContext.userName}/auto`);
     }
+
+    public async addBot(gameId: string) {
+        return await fetcher.httpPut<{}>(`/games/${gameId}/users/bot`);
+    }
 }

@@ -15,7 +15,8 @@
     "board": {
         "reset": "Annuler les mouvements en cours",
         "submit": "Terminer son tour",
-        "drawCard": "Piocher une carte"
+        "drawCard": "Piocher une carte",
+        "addBot": "Ajouter un robot"
     },
     "victory": {
         "title": "Félicitations {{winner}}"
