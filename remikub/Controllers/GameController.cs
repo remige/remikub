@@ -168,6 +168,29 @@
             return Ok();
         }
 
+        [HttpPut]
+        [Route("{id}/play/{user}/auto-play")]
+        public async Task<ActionResult> Resolve(Guid id, string user)
+        {
+            var game = _gameRepository.GetGame(id);
+            while (game.Winner is null)
+            {
+                if (game is null)
+                {
+                    return NotFound(id);
+                }
+
+                _automaticPlayer.AutoPlay(game, user);
+
+                await NotifyEndTurn(id, user, game.Winner);
+
+                await Task.Delay(500);
+
+                game = _gameRepository.GetGame(id);
+
+            }
+            return Ok();
+        }
 
         public static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
         [HttpPut]

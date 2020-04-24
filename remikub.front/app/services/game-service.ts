@@ -2,6 +2,7 @@ import { fetcher } from "./../network/fetcher";
 import { ICard } from "../model/icard";
 import { IGameResult } from "../model/igame-result";
 import { userContext } from "../context/user-context";
+import { orderBy } from "lodash-es";
 
 export class GameService {
 
@@ -34,7 +35,7 @@ export class GameService {
     }
 
     public async hand(gameId: string) {
-        return await fetcher.httpGet<ICard[]>(`/games/${gameId}/hand/${userContext.userName}`);
+        return orderBy(await fetcher.httpGet<ICard[]>(`/games/${gameId}/hand/${userContext.userName}`), ["value"]);
     }
 
     public async drawCard(gameId: string, hand: ICard[]) {

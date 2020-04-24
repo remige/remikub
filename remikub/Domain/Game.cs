@@ -18,6 +18,7 @@
                 foreach (var color in Enum.GetValues(typeof(CardColor)))
                 {
                     AvailableCards.Add(new Card(number, (CardColor)color!));
+                    AvailableCards.Add(new Card(number, (CardColor)color!));
                 }
             }
         }
