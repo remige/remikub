@@ -9,7 +9,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: remige/remikub
+  IMAGE_NAME: remikub
 
 jobs:
   # Push image to GitHub Packages.
