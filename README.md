@@ -6,7 +6,7 @@ Build the WebApi image :
 Run as standalone :
 - `docker run -d -p 8080:80 --name remikub remikub`
 
-Run with al dependencies
+Run with al dependencies :
 - `docker-compose up`
 
 Push to docker hub
