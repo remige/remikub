@@ -1,5 +1,7 @@
 # remikub
 
+WIP
+
 Build the WebApi image : 
 -  `docker build -t remikub .`
 
