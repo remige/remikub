@@ -9,8 +9,11 @@ Run as standalone :
 Run with al dependencies :
 - `docker-compose up`
 
-Push to docker hub
-- `docker login`
-- `docker images`
-- `docker tag ed8ceafe9149 remige/remikub:0.0.1`
-- `docker push remige/remikub`
+Push to registry :
+- Cf Action
+
+
+Deploy on server
+- `docker login docker.pkg.github.com -u remige`
+- `docker pull docker.pkg.github.com/remige/remikub/remikub:latest`
+- `docker run -d -p 80:80 docker.pkg.github.com/remige/remikub/remikub:latest --name  remikub`
