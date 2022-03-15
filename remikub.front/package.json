@@ -35,7 +35,7 @@
     "@types/moment": "^2.13.0",
     "flat": "^5.0.0",
     "i18next": "^19.1.0",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "mobx": "^5.15.4",
     "mobx-react": "^6.1.8",
     "mobx-react-router": "^4.1.0",
